@@ -10,19 +10,17 @@ function generateSensorMask(tempSensor, humiditySensor, ambientSensor) {
 }
 
 // Function to generate commands
-function generatingCommands(hostingLocation, locations, sensors, interrupt, ble, sampleMode, reportInterval, sampleInterval, prf, deviceType, latitude, longitude, motion, standstill) {
+function generatingCommands(hostingLocation, locations, sensors, interrupt, ble, sampleMode, reportInterval, sampleInterval, prf, deviceType, latitude, longitude, motionInterval, stanstillInterval) {
     let commands = [];
 
     if (deviceType === "Router") {
-        // Router specific commands
         commands.push(`RBCFG:VVRMT;BSC,1,G2,9999,${prf},5242,-99;__SEQNUM__$`);
 
         if (locations.includes("GPS")) {
             commands.push(`RBCFG:VVRMT;GPS,1,${latitude},${longitude},101;__SEQNUM__$`);
         }
     } else if (deviceType === "Solar") {
-        // Solar specific commands
-        commands.push(`TIMER,0000,${motion}:${standstill}:0:0#`);
+        commands.push(`TIMER,0000,${motionInterval}:${stanstillInterval}:0:0#`);
 
         if (interrupt.includes("Ambient Light")) {
             commands.push("ALARM_SET,1,1,0,0#");
@@ -172,8 +170,8 @@ async function submitForm() {
             formData.page3.deviceType,
             formData.page3.latitude,
             formData.page3.longitude,
-            formData.page3.motion,
-            formData.page3.standstill
+            formData.page3.motionInterval,
+            formData.page3.stanstillInterval
         );
 
         console.log("Form Data:", formData);
@@ -260,7 +258,7 @@ async function embedImage(pdfDoc, base64Image) {
                     });
 
                     const labelWidth = boldFont.widthOfTextAtSize(label, fontSize);
-                    const valueWidth = regularFont.widthOfTextAtSize(value, fontSize);
+                    const valueWidth = regularFont.widthOfTextAtSize(value || "NA", fontSize); // Handle null/undefined
                     const boxX = 50 + labelWidth + 5;
                     const boxY = yPos - fontSize;
 
@@ -296,54 +294,51 @@ async function embedImage(pdfDoc, base64Image) {
             });
 
             drawSection("UseCase Information", {
-                "Use Case: ": formData.page2.useCase,
-                "Coverage: ": formData.page2.coverage,
-                "Shipment Using: ": formData.page2.shipmentUsing,
-                "Reverse Pickup: ": formData.page2.reversePickup,
-                "Number of Lanes: ": formData.page2.numberOfLanes,
-                "Supported Battery Life: ": formData.page2.supportedBatteryLife
+                "Use Case: ": formData.page2.useCase || "NA",
+                "Coverage: ": formData.page2.coverage|| "NA",
+                "Shipment Using: ": formData.page2.shipmentUsing|| "NA",
+                "Reverse Pickup: ": formData.page2.reversePickup|| "NA",
+                "Number of Lanes: ": formData.page2.numberOfLanes|| "NA",
+                "Supported Battery Life: ": formData.page2.supportedBatteryLife|| "NA",
             });
+            drawSection("Device Configuration", deviceConfig);
+           // Modify the Device Configuration section like this:
+const deviceConfig = {
+    "Device Type: ": formData.page3.deviceType || "NA"
+};
 
-            drawSection("Device Configuration", {
-                "Device Type: ": formData.page3.deviceType,
-                "Locations: ": formData.page3.locations.length > 0 ? formData.page3.locations.join(", ") : "N/A",
-                "Sensors: ": formData.page3.sensors.length > 0 ? formData.page3.sensors.join(", ") : "N/A",
-                "Interrupt: ": formData.page3.interrupt.length > 0 ? formData.page3.interrupt.join(", ") : "N/A",
-                "BLE: ": formData.page3.ble,
-                "Sample Mode: ": formData.page3.sampleMode,
-                ...(formData.page3.sampleMode === "ON" ? {
-                    "Report Interval: ": formData.page3.reportInterval,
-                    "Sample Interval: ": formData.page3.sampleInterval
-                } : {
-                    "PRF: ": formData.page3.prf
-                })
-            });
-            drawSection("Document Sign Off", {
-                "Document Created: ": formData.page4.documentCreated,
-                "Last Updated: ": formData.page4.lastUpdated,
-                "Updated By: ": formData.page4.updatedBy,
-                "Created By: ": formData.page4.createdByName,
-                "Approved By: ": formData.page4.approvedByName,
-                "Approval Date: ": formData.page4.approvalDate
-            });
+if (formData.page3.deviceType === "Router") {
+    // Router specific fields
+    deviceConfig["Locations: "] = formData.page3.locations?.length > 0 ? formData.page3.locations.join(", ") : "N/A";
+    deviceConfig["PRF: "] = formData.page3.prf || "NA";
+    
+    if (formData.page3.locations?.includes("GPS")) {
+        deviceConfig["Latitude: "] = formData.page3.latitude || "NA";
+        deviceConfig["Longitude: "] = formData.page3.longitude || "NA";
+    }
+} else if (formData.page3.deviceType === "Solar") {
+    // Solar specific fields
+    deviceConfig["Interrupt: "] = formData.page3.interrupt?.length > 0 ? formData.page3.interrupt.join(", ") : "N/A";
+    deviceConfig["BLE: "] = formData.page3.ble || "NA";
+    deviceConfig["Motion Interval: "] = formData.page3.motionInterval || "NA";
+    deviceConfig["Standstill Interval: "] = formData.page3.stanstillInterval|| "NA";
+} else {
+    // Default device fields
+    deviceConfig["Locations: "] = formData.page3.locations?.length > 0 ? formData.page3.locations.join(", ") : "N/A";
+    deviceConfig["Sensors: "] = formData.page3.sensors?.length > 0 ? formData.page3.sensors.join(", ") : "N/A";
+    deviceConfig["Interrupt: "] = formData.page3.interrupt?.length > 0 ? formData.page3.interrupt.join(", ") : "N/A";
+    deviceConfig["BLE: "] = formData.page3.ble || "NA";
+    deviceConfig["Sample Mode: "] = formData.page3.sampleMode || "NA";
+    
+    if (formData.page3.sampleMode === "ON") {
+        deviceConfig["Report Interval: "] = formData.page3.reportInterval || "NA";
+        deviceConfig["Sample Interval: "] = formData.page3.sampleInterval || "NA";
+    } else {
+        deviceConfig["PRF: "] = formData.page3.prf || "NA";
+    }
+}
 
-            // const createdBySignatureImage = await embedImage(pdfDoc, formData.page4.createdBySignature);
-            // const approvedBySignatureImage = await embedImage(pdfDoc, formData.page4.approvedBySignature);
-            // currentPage.drawImage(createdBySignatureImage, {
-            //     x: 50,
-            //     y: yPos - 100,
-            //     width: 100,
-            //     height: 50,
-            // });
 
-            // currentPage.drawImage(approvedBySignatureImage, {
-            //     x: 200,
-            //     y: yPos - 100,
-            //     width: 100,
-            //     height: 50,
-            // });
-
-            // yPos -= 150;
             const maxCommandLength = Math.max(...commandsList.map(command => command.length));
             const boxWidth = maxCommandLength * fontSize * 0.6 + boxPadding * 2;
             const boxHeight = commandsList.length * lineHeight + boxPadding;
@@ -406,6 +401,7 @@ async function embedImage(pdfDoc, base64Image) {
 
             yPos -= boxPadding;
             yPos -= lineHeight * 3;
+            
             drawSection("Document Sign Off", {
                 "Document Created: ": formData.page4.documentCreated,
                 "Last Updated: ": formData.page4.lastUpdated,
@@ -414,6 +410,7 @@ async function embedImage(pdfDoc, base64Image) {
                 "Approved By: ": formData.page4.approvedByName,
                 "Approval Date: ": formData.page4.approvalDate
             });
+           
             currentPage.drawText("Created by Sign:", {
                 x: 50, // Left side
                 y: yPos - 10, // Position above the signature image
@@ -457,11 +454,11 @@ const modifiedPdfBytes = await pdfDoc.save();
             saveAs(blob, "rename_modified.pdf");
 
             console.log("PDF modified successfully!");
-            window.location.href = "thankyou.html";
+            // window.location.href = "thankyou.html";
 
-            localStorage.removeItem('page1Data');
-            localStorage.removeItem('page2Data');
-            localStorage.removeItem('page3Data');
+            // localStorage.removeItem('page1Data');
+            // localStorage.removeItem('page2Data');
+            // localStorage.removeItem('page3Data');
         } catch (error) {
             console.error("Error modifying PDF:", error);
             alert("Error modifying PDF: " + error.message);
