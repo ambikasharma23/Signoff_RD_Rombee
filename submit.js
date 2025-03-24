@@ -21,7 +21,7 @@ function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,
         }
     } else if (deviceType === "Solar") {
         commands.push(`TIMER,0000,${motionInterval}:${stanstillInterval}:0:0#`);
-
+    
         if (interrupt.includes("Ambient Light")) {
             commands.push("ALARM_SET,1,1,0,0#");
             commands.push("ALARM_SET,21,1,0,0#");
@@ -29,7 +29,7 @@ function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,
             commands.push("ALARM_SET,1,0,0,0#");
             commands.push("ALARM_SET,21,0,0,0#");
         }
-
+    
         if (ble === "ON") {
             commands.push("BLESCAN,1#");
             commands.push("BLESCAN,12,60,30#");
@@ -37,7 +37,21 @@ function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,
         } else {
             commands.push("BLESCAN,0#");
         }
-    } else {
+    
+        // Add hosting location specific commands
+        const page1Data = localStorage.getItem("page1Data");
+        if (page1Data) {
+            const { hostingLocation } = JSON.parse(page1Data);
+            
+            if (hostingLocation === "RB_US_Portal") {
+                commands.push("IP,34.202.96.232,30008#");
+                commands.push("IP2,34.233.153.141,30008#");
+            } else if (hostingLocation === "RB_DE_Portal") {
+                commands.push("IP,52.57.63.72,30008#");
+                commands.push("IP2,18.193.212.52,30008#");
+            }
+        }
+    }else {
         // Existing logic for other device types
         if (hostingLocation === "RB_US_Portal") {
             commands.push("AT+IP=0,aovx-listener.roambee.com,30009");
@@ -454,11 +468,11 @@ const modifiedPdfBytes = await pdfDoc.save();
             saveAs(blob, "rename_modified.pdf");
 
             console.log("PDF modified successfully!");
-            window.location.href = "thankyou.html";
+            // window.location.href = "thankyou.html";
 
-            localStorage.removeItem('page1Data');
-            localStorage.removeItem('page2Data');
-            localStorage.removeItem('page3Data');
+            // localStorage.removeItem('page1Data');
+            // localStorage.removeItem('page2Data');
+            // localStorage.removeItem('page3Data');
         } catch (error) {
             console.error("Error modifying PDF:", error);
             alert("Error modifying PDF: " + error.message);
