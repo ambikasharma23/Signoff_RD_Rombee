@@ -92,7 +92,7 @@
             </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="shipmentUsingGroup">
             <label for="shipmentUsing">Shipment Using:</label>
             <select id="shipmentUsing" name="shipmentUsing">
                 <option value="">Select your answer</option>
@@ -110,7 +110,7 @@
             </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="numberOfLanesGroup">
             <label for="numberOfLanes">Enter Number of Lanes:</label>
             <input type="number" id="numberOfLanes" name="numberOfLanes">
         </div>
@@ -128,6 +128,27 @@
 </div>
 
 <script>
+    // Function to handle Use Case dropdown change
+    function handleUseCaseChange() {
+        const useCase = document.getElementById("useCase").value;
+        const shipmentUsingGroup = document.getElementById("shipmentUsingGroup");
+        const reversePickupGroup = document.getElementById("reversePickupGroup");
+        const numberOfLanesGroup = document.getElementById("numberOfLanesGroup");
+
+        // Hide fields if UC5 is selected
+        if (useCase === "UC5: BLE Based Asset Monitoring") {
+            shipmentUsingGroup.classList.add("hidden");
+            reversePickupGroup.classList.add("hidden");
+            numberOfLanesGroup.classList.add("hidden");
+        } else {
+            shipmentUsingGroup.classList.remove("hidden");
+            reversePickupGroup.classList.remove("hidden");
+            numberOfLanesGroup.classList.remove("hidden");
+            // Also handle the shipment using change in case it was changed
+            handleShipmentUsingChange();
+        }
+    }
+
     // Function to handle Shipment Using dropdown change
     function handleShipmentUsingChange() {
         const shipmentUsing = document.getElementById("shipmentUsing").value;
@@ -141,13 +162,12 @@
         }
     }
 
-    // Attach event listener to Shipment Using dropdown
+    // Attach event listeners
+    document.getElementById("useCase").addEventListener("change", handleUseCaseChange);
     document.getElementById("shipmentUsing").addEventListener("change", handleShipmentUsingChange);
 
-    // On page load, check the Shipment Using value and hide/show Reverse Pickup accordingly
+    // On page load, check the values and hide/show fields accordingly
     window.onload = function () {
-        handleShipmentUsingChange(); // Initial check
-
         // Load saved data (if any)
         const savedData = localStorage.getItem("page2Data");
         if (savedData) {
@@ -161,6 +181,9 @@
             document.getElementById("numberOfLanes").value = formData.numberOfLanes || "";
             document.getElementById("supportedBatteryLife").value = formData.supportedBatteryLife || "";
         }
+        
+        // Initial checks
+        handleUseCaseChange();
     };
 
     function previousPage() {
