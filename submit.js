@@ -454,11 +454,11 @@ const modifiedPdfBytes = await pdfDoc.save();
             saveAs(blob, "rename_modified.pdf");
 
             console.log("PDF modified successfully!");
-            // window.location.href = "thankyou.html";
+            window.location.href = "thankyou.html";
 
-            // localStorage.removeItem('page1Data');
-            // localStorage.removeItem('page2Data');
-            // localStorage.removeItem('page3Data');
+            localStorage.removeItem('page1Data');
+            localStorage.removeItem('page2Data');
+            localStorage.removeItem('page3Data');
         } catch (error) {
             console.error("Error modifying PDF:", error);
             alert("Error modifying PDF: " + error.message);
