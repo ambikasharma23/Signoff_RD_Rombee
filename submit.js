@@ -301,7 +301,7 @@ async function embedImage(pdfDoc, base64Image) {
                 "Number of Lanes: ": formData.page2.numberOfLanes|| "NA",
                 "Supported Battery Life: ": formData.page2.supportedBatteryLife|| "NA",
             });
-            drawSection("Device Configuration", deviceConfig);
+            
            // Modify the Device Configuration section like this:
 const deviceConfig = {
     "Device Type: ": formData.page3.deviceType || "NA"
@@ -337,7 +337,7 @@ if (formData.page3.deviceType === "Router") {
         deviceConfig["PRF: "] = formData.page3.prf || "NA";
     }
 }
-
+drawSection("Device Configuration", deviceConfig);
 
             const maxCommandLength = Math.max(...commandsList.map(command => command.length));
             const boxWidth = maxCommandLength * fontSize * 0.6 + boxPadding * 2;
