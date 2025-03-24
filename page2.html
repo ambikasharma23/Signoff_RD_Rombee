@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title>RB_Customer Onboarding Form - Page 2</title> -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-container {
+            max-width: 500px;
+            margin-left: auto;  /* Pushes the form to the right */
+            margin-right: 50px; /* Adds some space from the right edge */
+            padding: 20px 20px 20px 40px; 
+            border-radius: 10px;
+            background-color: black;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            text-align: left;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-group input[type="number"] {
+            width: 100%;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+        .hidden {
+            display: none; /* Class to hide elements */
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h1>RB_Customer Onboarding Form</h1>
+    <h2>UseCase Information</h2>
+    
+    <form id="page2Form">
+        <div class="form-group">
+            <label for="useCase">Use Case:</label>
+            <select id="useCase" name="useCase" required>
+                <option value="">Select your answer</option>
+                <option value="UC1: Sensor based Shipment Monitoring (Land)">UC1: Sensor based Shipment Monitoring (Land)</option>
+                <option value="UC2: Sensor based Shipment Monitoring (Ocean)">UC2: Sensor based Shipment Monitoring (Ocean)</option>
+                <option value="UC3: Sensor based Shipment Monitoring (Air)">UC3: Sensor based Shipment Monitoring (Air)</option>
+                <option value="UC4: Sensor-less Shipment Monitoring">UC4: Sensor-less Shipment Monitoring</option>
+                <option value="UC5: BLE Based Asset Monitoring">UC5: BLE Based Asset Monitoring</option>
+                <option value="UC6: D2C Asset Monitoring">UC6: D2C Asset Monitoring</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="coverage">Coverage:</label>
+            <select id="coverage" name="coverage">
+                <option value="">Select your answer</option>
+                <option value="Global">Global</option>
+                <option value="Specific Lanes">Specific Lanes</option>
+                <option value="Countries">Countries</option>
+                <option value="Indoor">Indoor</option>
+                <option value="Outdoor">Outdoor</option>
+                <option value="Combined (Indoor and Outdoor)">Combined (Indoor and Outdoor)</option>
+                <option value="LAN">LAN</option>
+                <option value="WIFI">WIFI</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="shipmentUsing">Shipment Using:</label>
+            <select id="shipmentUsing" name="shipmentUsing">
+                <option value="">Select your answer</option>
+                <option value="One way">One way</option>
+                <option value="Reusable">Reusable</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="reversePickupGroup">
+            <label for="reversePickup">Reverse Pickup:</label>
+            <select id="reversePickup" name="reversePickup">
+                <option value="">Select your answer</option>
+                <option value="Customer">Customer</option>
+                <option value="Managed Service">Managed Service</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="numberOfLanes">Enter Number of Lanes:</label>
+            <input type="number" id="numberOfLanes" name="numberOfLanes">
+        </div>
+
+        <div class="form-group">
+            <label for="supportedBatteryLife">Supported Battery Life:</label>
+            <input type="number" id="supportedBatteryLife" name="supportedBatteryLife">
+        </div>
+
+        <div class="button-container">
+            <button type="button" onclick="previousPage()">Back</button>
+            <button type="button" onclick="nextPage()">Next</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Function to handle Shipment Using dropdown change
+    function handleShipmentUsingChange() {
+        const shipmentUsing = document.getElementById("shipmentUsing").value;
+        const reversePickupGroup = document.getElementById("reversePickupGroup");
+
+        // Hide Reverse Pickup if Shipment Using is "One way"
+        if (shipmentUsing === "One way") {
+            reversePickupGroup.classList.add("hidden");
+        } else {
+            reversePickupGroup.classList.remove("hidden");
+        }
+    }
+
+    // Attach event listener to Shipment Using dropdown
+    document.getElementById("shipmentUsing").addEventListener("change", handleShipmentUsingChange);
+
+    // On page load, check the Shipment Using value and hide/show Reverse Pickup accordingly
+    window.onload = function () {
+        handleShipmentUsingChange(); // Initial check
+
+        // Load saved data (if any)
+        const savedData = localStorage.getItem("page2Data");
+        if (savedData) {
+            const formData = JSON.parse(savedData);
+
+            // Repopulate the form fields
+            document.getElementById("useCase").value = formData.useCase || "";
+            document.getElementById("coverage").value = formData.coverage || "";
+            document.getElementById("shipmentUsing").value = formData.shipmentUsing || "";
+            document.getElementById("reversePickup").value = formData.reversePickup || "";
+            document.getElementById("numberOfLanes").value = formData.numberOfLanes || "";
+            document.getElementById("supportedBatteryLife").value = formData.supportedBatteryLife || "";
+        }
+    };
+
+    function previousPage() {
+        // Save current form data to localStorage
+        const formData = {
+            useCase: document.getElementById("useCase").value || "N/A",
+            coverage: document.getElementById("coverage").value || "N/A",
+            shipmentUsing: document.getElementById("shipmentUsing").value || "N/A",
+            reversePickup: document.getElementById("reversePickup").value || "N/A",
+            numberOfLanes: document.getElementById("numberOfLanes").value || "N/A",
+            supportedBatteryLife: document.getElementById("supportedBatteryLife").value || "N/A",
+        };
+
+        localStorage.setItem("page2Data", JSON.stringify(formData));
+
+        // Redirect to the previous page (Page 1)
+        window.location.href = "index.html";
+    }
+
+    function nextPage() {
+        // Validate the form before proceeding to the next page
+        if (document.getElementById("page2Form").checkValidity()) {
+            // Collect form data
+            const formData = {
+                useCase: document.getElementById("useCase").value || "N/A",
+                coverage: document.getElementById("coverage").value || "N/A",
+                shipmentUsing: document.getElementById("shipmentUsing").value || "N/A",
+                reversePickup: document.getElementById("reversePickup").value || "N/A",
+                numberOfLanes: document.getElementById("numberOfLanes").value || "N/A",
+                supportedBatteryLife: document.getElementById("supportedBatteryLife").value || "N/A",
+            };
+
+            // Save form data to localStorage
+            localStorage.setItem("page2Data", JSON.stringify(formData));
+
+            // Redirect to the next page (Page 3)
+            window.location.href = "page3.html";
+        } else {
+            alert("Please fill out all required fields correctly.");
+        }
+    }
+</script>
+
+</body>
+</html>
