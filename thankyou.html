@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RB_Customer Onboarding Form - Page 1</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Popup Styles */
+        .popup {
+            position: fixed;
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Adjust for exact center */
+            width: 450px; /* Slightly increased width */
+            height: 300px; /* Slightly increased height */
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden; /* Ensures the content stays within the rectangle */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000; /* Ensures it stays on top */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+        .popup img {
+            width: 200px; /* Increased size for the GIF */
+            height: 200px; /* Increased size for the GIF */
+            object-fit: contain; /* Ensures the GIF fits within the specified size */
+        }
+        .popup button {
+            margin-top: 10px; /* Reduced margin to bring the button closer to the GIF */
+            padding: 12px 24px; /* Increased padding for a larger button */
+            border: none;
+            border-radius: 5px;
+            background-color: green;
+            color: white;
+            cursor: pointer;
+            font-size: 16px; /* Increased font size for better visibility */
+        }
+        .popup button:hover {
+            background-color: darkgreen;
+        }
+
+        /* Overlay Styles */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+            z-index: 999; /* Ensures it stays behind the popup */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Popup Rectangle -->
+    <div class="popup">
+        <img src="logo.gif" alt="Logo">
+        <button onclick="window.location.href='index.html'">Done</button>
+    </div>
+
+</body>
+</html>
