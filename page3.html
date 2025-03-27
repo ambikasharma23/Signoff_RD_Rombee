@@ -108,7 +108,7 @@
              
             <!-- Locations -->
             <div id="locationsSection" class="form-group hidden">
-                <div class="config-heading">Locations:</div>
+                <div class="config-heading">Select Options To Get Location Information:</div>
                 <!-- GPS Checkbox -->
                 <label><input type="checkbox" name="locations" value="GPS" onchange="handleGPSChange()"> GPS</label>
                 <!-- GPS Coordinates (Only for Router) -->
@@ -127,7 +127,7 @@
 
             <!-- Sensors -->
             <div id="sensorsSection" class="form-group hidden">
-                <div class="config-heading">Sensors:</div>
+                <div class="config-heading">Select The Sensors You Want ON For Your Use Case:</div>
                 <label><input type="checkbox" name="sensors" value="Temperature"> Temperature</label>
                 <label><input type="checkbox" name="sensors" value="Humidity" id="humiditySensor"> Humidity</label>
                 <label><input type="checkbox" name="sensors" value="Ambient Light"> Ambient Light</label>
@@ -136,7 +136,7 @@
 
             <!-- Interrupt -->
             <div id="interruptSection" class="form-group hidden">
-                <div class="config-heading">Interrupt:</div>
+                <div class="config-heading">Do You Want To Measure?</div>
                 <!-- Shock Checkbox (Hidden for Solar) -->
                 <label id="shockCheckboxLabel"><input type="checkbox" name="interrupt" value="Shock"> Shock</label>
                 <!-- Ambient Light Checkbox -->
@@ -145,7 +145,7 @@
 
             <!-- BLE -->
             <div id="bleSection" class="form-group hidden">
-                <div class="config-heading">BLE:</div>
+                <div class="config-heading">Do You Want To Use BLE Receiver?</div>
                 <label><input type="radio" name="ble" value="ON"> ON</label>
                 <label><input type="radio" name="ble" value="OFF"> OFF</label>
             </div>
@@ -173,7 +173,7 @@
 </div>
             <!-- PRF Checkbox (Only for Solar) -->
             <div id="prfCheckboxSection" class="form-group hidden">
-                <div class="config-heading">PRF:</div>
+                <div class="config-heading">Enter How Often The Device Should Report To The Cloud:</div>
                 <label><input type="checkbox" name="prfCheckbox" value="PRF" onchange="handlePRFCheckboxChange()"> PRF</label>
             </div>
 
