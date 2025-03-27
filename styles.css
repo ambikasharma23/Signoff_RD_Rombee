@@ -37,3 +37,160 @@ body {
             max-width: 100%;
             height: auto;
         }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-container {
+            max-width: 500px;
+            margin-left: auto;  /* Pushes the form to the right */
+            margin-right: 50px; /* Adds some space from the right edge */
+            padding: 20px 20px 20px 40px; 
+            border-radius: 10px;
+            background-color: black;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            text-align: left;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-group input[type="number"] {
+            width: 100%;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+        .hidden {
+            display: none; /* Class to hide elements */
+        }
+        .phone-input-group {
+            display: flex;
+            gap: 10px; /* Space between country code and phone number */
+        }
+        .phone-input-group select,
+        .phone-input-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid black;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        /* Override Select2 styles to match your design */
+        .select2-container .select2-selection--single {
+            height: 38px; /* Match the height of other input fields */
+            border: 1px solid black;
+            border-radius: 5px;
+            padding: 5px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 38px; /* Center the text vertically */
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 36px; /* Match the height of the dropdown */
+        }
+        .select2-results__option {
+            color: black;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-group input[type="checkbox"],
+        .form-group input[type="radio"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .config-heading {
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        .form-group input:invalid,
+        .form-group select:invalid {
+            border-color: red;
+        }
+        .form-group input:valid,
+        .form-group select:valid {
+            border-color: green;
+        }
+        .phone-input-group {
+            display: flex;
+            gap: 10px; /* Space between country code and phone number */
+        }
+        .phone-input-group select,
+        .phone-input-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid black;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        /* Override Select2 styles to match your design */
+        .select2-container .select2-selection--single {
+            height: 38px; /* Match the height of other input fields */
+            border: 1px solid black;
+            border-radius: 5px;
+            padding: 5px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 38px; /* Center the text vertically */
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 36px; /* Match the height of the dropdown */
+        }
+        .select2-results__option {
+            color: black;
+        }
+        /* Style for signature preview images */
+        .signature-preview-container {
+            margin-top: 10px;
+        }
+        .signature-preview {
+            max-width: 100%;
+            max-height: 100px; /* Adjust this value as needed */
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
