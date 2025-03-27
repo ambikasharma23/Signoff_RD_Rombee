@@ -192,7 +192,7 @@ async function submitForm() {
         console.log("Generated Commands:", commandsList);
 
         try {
-            const existingPdfBytes = await fetch("rename.pdf").then(res => res.arrayBuffer());
+            const existingPdfBytes = await fetch("rename1.pdf").then(res => res.arrayBuffer());
             const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
             const [italicFont, boldFont, regularFont] = await Promise.all([
                 pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaOblique),
@@ -214,8 +214,33 @@ async function embedImage(pdfDoc, base64Image) {
             const boxPadding = 5;
             const boxColor = PDFLib.rgb(1, 222 / 255, 89 / 255);
             const bottomMargin = 50;
-
             let yPos = height - 100;
+// Format the text with proper capitalization
+// Format the text with proper capitalization
+const formattedName = formData.page1.userName
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+
+const headingText = `${formattedName} Onboarding_Form`;
+
+// Calculate position - moved up and right
+const textWidth = boldFont.widthOfTextAtSize(headingText, 24);
+const centerX = (currentPage.getWidth() - textWidth) / 2 + 60; // +50 moves it right
+const headingY = currentPage.getHeight() - 50; // -50 moves it up compared to -100
+
+// Draw the heading with new position
+currentPage.drawText(headingText, {
+    x: centerX,  // Now slightly right of center
+    y: headingY, // Higher up on the page
+    size: 24,
+    font: boldFont,
+    color: PDFLib.rgb(0, 0, 0),
+});
+
+// Adjust yPos for subsequent elements (if needed)
+yPos = headingY - lineHeight * 2; // Position next elements below heading
+const properCaseText = `${formattedName} Onboarding_Form`;
 
             const currentDate = new Date();
             const formattedDate = currentDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -228,7 +253,7 @@ async function embedImage(pdfDoc, base64Image) {
                 font: italicFont,
             });
 
-            yPos -= lineHeight * 2;
+            yPos -= lineHeight * 3;
 
             const drawSection = (title, data) => {
                 console.log(`Drawing section: ${title}`);
@@ -338,10 +363,10 @@ if (formData.page3.deviceType === "Router") {
     deviceConfig["Standstill Interval: "] = formData.page3.stanstillInterval|| "NA";
 } else {
     // Default device fields
-    deviceConfig["Locations: "] = formData.page3.locations?.length > 0 ? formData.page3.locations.join(", ") : "N/A";
-    deviceConfig["Sensors: "] = formData.page3.sensors?.length > 0 ? formData.page3.sensors.join(", ") : "N/A";
-    deviceConfig["Interrupt: "] = formData.page3.interrupt?.length > 0 ? formData.page3.interrupt.join(", ") : "N/A";
-    deviceConfig["BLE: "] = formData.page3.ble || "NA";
+    deviceConfig["Select options to get location information: "] = formData.page3.locations?.length > 0 ? formData.page3.locations.join(", ") : "N/A";
+    deviceConfig["Select the sensors you want ON for your use case: "] = formData.page3.sensors?.length > 0 ? formData.page3.sensors.join(", ") : "N/A";
+    deviceConfig["Do you want to measure?: "] = formData.page3.interrupt?.length > 0 ? formData.page3.interrupt.join(", ") : "N/A";
+    deviceConfig["Do you want to use BLE Receiver: "] = formData.page3.ble || "NA";
     deviceConfig["Sample Mode: "] = formData.page3.sampleMode || "NA";
     
     if (formData.page3.sampleMode === "ON") {
