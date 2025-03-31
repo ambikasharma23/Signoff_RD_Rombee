@@ -3,206 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document Sign Off</title>
+    <title>Product Category</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Include Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .form-container {
-            max-width: 500px;
-            margin-left: auto;  /* Pushes the form to the right */
-            margin-right: 50px; /* Adds some space from the right edge */
-            padding: 20px 20px 20px 40px; 
-            border-radius: 10px;
-            background-color: black;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            text-align: left;
-            color: white; /* Ensure labels are visible on black background */
-        }
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-        }
-        .form-group input:invalid,
-        .form-group select:invalid {
-            border-color: red;
-        }
-        .form-group input:valid,
-        .form-group select:valid {
-            border-color: green;
-        }
-        .button-container {
-            text-align: right;
-            margin-top: 20px;
-        }
-
-        .button-container button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #007BFF;
-            color: white;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .button-container button:hover {
-            background-color: #0056b3;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        /* Style for phone input group */
-        .phone-input-group {
-            display: flex;
-            gap: 10px; /* Space between country code and phone number */
-        }
-        .phone-input-group select,
-        .phone-input-group input {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid black;
-            border-radius: 5px;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-        }
-
-        /* Override Select2 styles to match your design */
-        .select2-container .select2-selection--single {
-            height: 38px; /* Match the height of other input fields */
-            border: 1px solid black;
-            border-radius: 5px;
-            padding: 5px;
-        }
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 38px; /* Center the text vertically */
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-        }
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 36px; /* Match the height of the dropdown */
-        }
-        .select2-results__option {
-            color: black;
-        }
-        /* Style for signature preview images */
-        .signature-preview-container {
-            margin-top: 10px;
-        }
-        .signature-preview {
-            max-width: 100%;
-            max-height: 100px; /* Adjust this value as needed */
-            height: auto;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-top: 5px;
-        }
-    </style>
 </head>
 <body>
-
-<div class="form-container">
-    <h1 style="color: white;">Document Sign Off</h1>
-    <!-- <h2 style="color: yellow;">Document Approval</h2> -->
-    
-    <form id="signOffForm">
+    <div class="form-container">
+        <h2 style="text-align: left;">Product Category</h2>
+        
+        <!-- Shipment Type Dropdown -->
         <div class="form-group">
-            <label for="documentCreated">Document Created:</label>
-            <input type="date" id="documentCreated" name="documentCreated" required>
+            <label for="shipment-type">Sensor based Shipment Monitoring </label>
+            <div class="custom-dropdown">
+                <button class="dropdown-btn" id="shipment-btn">Select Shipment Type</button>
+                <div class="dropdown-content" id="shipment-dropdown">
+                    <div class="dropdown-option" data-value="Pharma">Pharma</div>
+                    <div class="dropdown-option" data-value="Food & Beverage">Food & Beverage</div>
+                    <div class="dropdown-option" data-value="Frozen">Frozen</div>
+                    <div class="dropdown-option" data-value="Security">Security</div>
+                    <div class="dropdown-option" data-value="Sensitive Cargo (non-perishable)">Sensitive Cargo (non-perishable)</div>
+                    <div class="dropdown-option" data-value="Non-Sensitive Cargo">Non-Sensitive Cargo</div>
+                    <div class="dropdown-option" data-value="Dry Cargo">Dry Cargo</div>
+                </div>
+                <input type="hidden" id="shipment-type" name="shipment-type">
+            </div>
         </div>
+        
+        <!-- Inventory Type Dropdown -->
         <div class="form-group">
-            <label for="lastUpdated">Last Updated:</label>
-            <input type="date" id="lastUpdated" name="lastUpdated" required>
+            <label for="inventory-type"> Inventories</label>
+            <div class="custom-dropdown">
+                <button class="dropdown-btn" id="inventory-btn">Select Inventory Type</button>
+                <div class="dropdown-content" id="inventory-dropdown">
+                    <div class="dropdown-option" data-value="Pharma">Pharma</div>
+                    <div class="dropdown-option" data-value="Food & Beverage">Food & Beverage</div>
+                    <div class="dropdown-option" data-value="Frozen">Frozen</div>
+                    <div class="dropdown-option" data-value="Inventories">Inventories</div>
+                    <div class="dropdown-option" data-value="Security">Security</div>
+                    <div class="dropdown-option" data-value="Sensitive Inventories">Sensitive Inventories</div>
+                    <div class="dropdown-option" data-value="Non-Sensitive Inventories">Non-Sensitive Inventories</div>
+                </div>
+                <input type="hidden" id="inventory-type" name="inventory-type">
+            </div>
         </div>
-        <div class="form-group">
-            <label for="updatedBy">Updated By (CS Manager):</label>
-            <input type="text" id="updatedBy" name="updatedBy" required>
-        </div>
-
-        <div class="form-group">
-            <label for="createdByName">Created By:</label>
-            <input type="text" id="createdByName" name="createdByName" placeholder="Enter name" required>
-            <label for="createdBySignature">Signature:</label>
-            <input type="file" id="createdBySignature" name="createdBySignature" accept="image/*" required>
-            <img id="createdBySignaturePreview" src="#" alt="Signature Preview" class="signature-preview" style="display:none;">
-        </div>
-        <div class="signature-preview-container">
-            <img id="createdBySignaturePreview" src="#" alt="Signature Preview" class="signature-preview" style="display:none;">
-        </div>
-        <div class="form-group">
-            <label for="approvedByName">Approved By (Customer):</label>
-            <input type="text" id="approvedByName" name="approvedByName" placeholder="Enter name" required>
-            <label for="approvedBySignature">Signature:</label>
-            <input type="file" id="approvedBySignature" name="approvedBySignature" accept="image/*" required>
-            <img id="approvedBySignaturePreview" src="#" alt="Signature Preview" class="signature-preview" style="display:none;">
-        </div>
-        <div class="signature-preview-container">
-            <img id="approvedBySignaturePreview" src="#" alt="Signature Preview" class="signature-preview" style="display:none;">
-        </div>
-        <div class="form-group">
-            <label for="approvalDate">Approval Date:</label>
-            <input type="date" id="approvalDate" name="approvalDate" required>
-        </div>
-
+        
         <div class="button-container">
-            <button type="button" onclick="previousPage()">Back</button>
-            <button type="button" onclick="submitForm()">Submit</button>
+            <button type="button" id="back-btn">Back</button>
+            <button type="button" id="next-btn">Next</button>
         </div>
-    </form>
-</div>
-<!-- Include pdf-lib Library -->
-<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-<!-- Include FileSaver.js for saving files -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-<script>
-    function readURL(input, previewId) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
+    </div>
 
-            reader.onload = function(e) {
-                document.getElementById(previewId).src = e.target.result;
-                document.getElementById(previewId).style.display = 'block';
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Shipment dropdown functionality
+            const shipmentBtn = document.getElementById('shipment-btn');
+            const shipmentDropdown = document.getElementById('shipment-dropdown');
+            const shipmentType = document.getElementById('shipment-type');
+            const shipmentOptions = shipmentDropdown.querySelectorAll('.dropdown-option');
+            
+            // Inventory dropdown functionality
+            const inventoryBtn = document.getElementById('inventory-btn');
+            const inventoryDropdown = document.getElementById('inventory-dropdown');
+            const inventoryType = document.getElementById('inventory-type');
+            const inventoryOptions = inventoryDropdown.querySelectorAll('.dropdown-option');
+            
+            // Load saved values if they exist
+            function loadSavedValues() {
+                const page4Data = JSON.parse(localStorage.getItem('page4Data')) || {};
+                
+                if(page4Data.shipmentType) {
+                    shipmentType.value = page4Data.shipmentType;
+                    shipmentBtn.textContent = page4Data.shipmentType;
+                    
+                    // Highlight the selected option
+                    shipmentOptions.forEach(option => {
+                        if(option.getAttribute('data-value') === page4Data.shipmentType) {
+                            option.classList.add('selected');
+                        }
+                    });
+                }
+                
+                if(page4Data.inventoryType) {
+                    inventoryType.value = page4Data.inventoryType;
+                    inventoryBtn.textContent = page4Data.inventoryType;
+                    
+                    // Highlight the selected option
+                    inventoryOptions.forEach(option => {
+                        if(option.getAttribute('data-value') === page4Data.inventoryType) {
+                            option.classList.add('selected');
+                        }
+                    });
+                }
             }
-
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
-    document.getElementById('createdBySignature').addEventListener('change', function() {
-        readURL(this, 'createdBySignaturePreview');
-    });
-
-    document.getElementById('approvedBySignature').addEventListener('change', function() {
-        readURL(this, 'approvedBySignaturePreview');
-    });
-
-    document.getElementById('signOffForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-    });
-    function previousPage() {
-            window.location.href = "page3.html";
-        }
-</script>
-<script src="submit.js"></script>
+            
+            // Call load function when page loads
+            loadSavedValues();
+            
+            // Also check for values when page is shown (for back navigation)
+            window.addEventListener('pageshow', function(event) {
+                loadSavedValues();
+            });
+            
+            // Toggle shipment dropdown
+            shipmentBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                shipmentDropdown.classList.toggle('show');
+                // Close inventory dropdown if open
+                inventoryDropdown.classList.remove('show');
+            });
+            
+            // Toggle inventory dropdown
+            inventoryBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                inventoryDropdown.classList.toggle('show');
+                // Close shipment dropdown if open
+                shipmentDropdown.classList.remove('show');
+            });
+            
+            // Handle shipment option selection
+            shipmentOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    shipmentType.value = value;
+                    shipmentBtn.textContent = value;
+                    
+                    // Save to page4Data object
+                    const page4Data = JSON.parse(localStorage.getItem('page4Data')) || {};
+                    page4Data.shipmentType = value;
+                    localStorage.setItem('page4Data', JSON.stringify(page4Data));
+                    
+                    // Highlight selected option
+                    shipmentOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    // Close dropdown after selection
+                    shipmentDropdown.classList.remove('show');
+                });
+            });
+            
+            // Handle inventory option selection
+            inventoryOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    inventoryType.value = value;
+                    inventoryBtn.textContent = value;
+                    
+                    // Save to page4Data object
+                    const page4Data = JSON.parse(localStorage.getItem('page4Data')) || {};
+                    page4Data.inventoryType = value;
+                    localStorage.setItem('page4Data', JSON.stringify(page4Data));
+                    
+                    // Highlight selected option
+                    inventoryOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    // Close dropdown after selection
+                    inventoryDropdown.classList.remove('show');
+                });
+            });
+            
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function() {
+                shipmentDropdown.classList.remove('show');
+                inventoryDropdown.classList.remove('show');
+            });
+            
+            // Prevent dropdown from closing when clicking inside
+            shipmentDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            inventoryDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            // Navigation buttons
+            document.getElementById('back-btn').addEventListener('click', function() {
+                window.location.href = 'page3.html';
+            });
+            
+            document.getElementById('next-btn').addEventListener('click', function() {
+                // Save data to page4Data object before navigating
+                const page4Data = {
+                    shipmentType: shipmentType.value,
+                    inventoryType: inventoryType.value
+                };
+                localStorage.setItem('page4Data', JSON.stringify(page4Data));
+                
+                window.location.href = 'page5.html';
+            });
+        });
+    </script>
 </body>
 </html>
