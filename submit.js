@@ -153,7 +153,8 @@ async function submitForm() {
     const page1Data = JSON.parse(localStorage.getItem("page1Data"));
     const page2Data = JSON.parse(localStorage.getItem("page2Data"));
     const page3Data = JSON.parse(localStorage.getItem("page3Data"));
-    const page4Data = {
+    const page4Data = JSON.parse(localStorage.getItem("page4Data"));
+    const page5Data = {
         documentCreated: document.getElementById('documentCreated').value,
         lastUpdated: document.getElementById('lastUpdated').value,
         updatedBy: document.getElementById('updatedBy').value,
@@ -167,8 +168,9 @@ async function submitForm() {
         const formData = {
             page1: page1Data,
             page2: page2Data,
-            page3: page3Data, 
-            page4: page4Data,      
+            page3: page3Data,
+            page4:page4Data, 
+            page5: page5Data,      
     };
 
         const commandsList = generatingCommands(
@@ -216,30 +218,95 @@ async function embedImage(pdfDoc, base64Image) {
             const bottomMargin = 50;
             let yPos = height - 100;
 // Format the text with proper capitalization
-// Format the text with proper capitalization
+// Format the name with proper capitalization
 const formattedName = formData.page1.userName
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 
-const headingText = `${formattedName} Onboarding_Form`;
+const maxWidth = currentPage.getWidth() - 100; // Comfortable margins
+const minFontSize = 10; // Minimum acceptable font size
+const suffix = " Onboarding_Form";
+// let fontSize = 24;
+let finalText = formattedName + suffix;
+let textWidth;
+let centerX;
+let headingY = currentPage.getHeight() - 50; // Position from top
 
-// Calculate position - moved up and right
-const textWidth = boldFont.widthOfTextAtSize(headingText, 24);
-const centerX = (currentPage.getWidth() - textWidth) / 2 + 60; // +50 moves it right
-const headingY = currentPage.getHeight() - 50; // -50 moves it up compared to -100
+// Strategy 1: Try full text with auto-sized font
+do {
+    textWidth = boldFont.widthOfTextAtSize(finalText, fontSize);
+    if (textWidth > maxWidth && fontSize > minFontSize) {
+        fontSize -= 1;
+    }
+} while (textWidth > maxWidth && fontSize > minFontSize);
 
-// Draw the heading with new position
-currentPage.drawText(headingText, {
-    x: centerX,  // Now slightly right of center
-    y: headingY, // Higher up on the page
-    size: 24,
-    font: boldFont,
-    color: PDFLib.rgb(0, 0, 0),
-});
+// Strategy 2: If still too wide at min size, use ellipsis
+if (textWidth > maxWidth) {
+    const ellipsis = "...";
+    const suffixWidth = boldFont.widthOfTextAtSize(suffix + ellipsis, minFontSize);
+    const availableWidth = maxWidth - suffixWidth;
+    
+    // Find how much of the name we can show
+    let visibleName = "";
+    for (let i = formattedName.length; i > 0; i--) {
+        const testName = formattedName.substring(0, i) + ellipsis;
+        if (boldFont.widthOfTextAtSize(testName, minFontSize) <= availableWidth) {
+            visibleName = testName;
+            break;
+        }
+    }
+    
+    finalText = visibleName + suffix;
+    textWidth = boldFont.widthOfTextAtSize(finalText, minFontSize);
+    fontSize = minFontSize;
+}
 
-// Adjust yPos for subsequent elements (if needed)
-yPos = headingY - lineHeight * 2; // Position next elements below heading
+// Strategy 3: As last resort, split to two lines
+if (textWidth > maxWidth) {
+    // Draw name on first line (truncated if needed)
+    let displayName = formattedName;
+    let nameWidth = boldFont.widthOfTextAtSize(displayName, fontSize);
+    
+    while (nameWidth > maxWidth && displayName.length > 10) {
+        displayName = displayName.substring(0, displayName.length - 1);
+        nameWidth = boldFont.widthOfTextAtSize(displayName + "...", fontSize);
+    }
+    
+    if (displayName.length < formattedName.length) {
+        displayName += "...";
+    }
+    
+    currentPage.drawText(displayName, {
+        x: 50,
+        y: headingY,
+        size: fontSize,
+        font: boldFont,
+        color: PDFLib.rgb(0, 0, 0),
+    });
+    
+    // Draw suffix on second line
+    currentPage.drawText("Onboarding_Form", {
+        x: 50,
+        y: headingY - 30,
+        size: fontSize,
+        font: boldFont,
+        color: PDFLib.rgb(0, 0, 0),
+    });
+    
+    yPos = headingY - 60;
+} else {
+    // Original centered version fits
+    centerX = (currentPage.getWidth() - textWidth) / 2 + 30;
+    currentPage.drawText(finalText, {
+        x: centerX,
+        y: headingY,
+        size: fontSize,
+        font: boldFont,
+        color: PDFLib.rgb(0, 0, 0),
+    });
+    yPos = headingY - lineHeight * 2;
+}
 const properCaseText = `${formattedName} Onboarding_Form`;
 
             const currentDate = new Date();
@@ -325,11 +392,16 @@ const properCaseText = `${formattedName} Onboarding_Form`;
             drawSection("User Account Information", {
                 "Hosting Location: ": formData.page1.hostingLocation,
                 "Honeycomb Role: ": formData.page1.honeycombRole,
+                "Portal Account Name: " :formData.page1.portalAccountName,
                 "User Name: ": formData.page1.userName,
                 "Designation: ": formData.page1.designation,
                 "Email: ": formData.page1.email,
                 "Phone: ": formData.page1.phoneNumber,
-                "SSO: ": formData.page1.ssoNeeded
+                "SSO: ": formData.page1.ssoNeeded,
+    ...(formData.page1.ssoNeeded === "Yes" ? {
+        "Customer IT Contact Name: ": formData.page1.itContactName,
+        "Customer IT Contact Email: ": formData.page1.itContactEmail
+    } : {})
             });
 
             drawSection("UseCase Information", {
@@ -440,14 +512,19 @@ drawSection("Device Configuration", deviceConfig);
 
             yPos -= boxPadding;
             yPos -= lineHeight * 3;
-            
+            drawSection("Product Category", {
+                "Sensor based Shipment Monitoring: ": formData.page4.shipmentType,
+                "Inventories: ": formData.page4.inventoryType,
+                
+            });
+            yPos -= lineHeight * 2;
             drawSection("Document Sign Off", {
-                "Document Created: ": formData.page4.documentCreated,
-                "Last Updated: ": formData.page4.lastUpdated,
-                "Updated By: ": formData.page4.updatedBy,
-                "Created By: ": formData.page4.createdByName,
-                "Approved By: ": formData.page4.approvedByName,
-                "Approval Date: ": formData.page4.approvalDate
+                "Document Created: ": formData.page5.documentCreated,
+                "Last Updated: ": formData.page5.lastUpdated,
+                "Updated By: ": formData.page5.updatedBy,
+                "Created By: ": formData.page5.createdByName,
+                "Approved By: ": formData.page5.approvedByName,
+                "Approval Date: ": formData.page5.approvalDate
             });
            
             currentPage.drawText("Created by Sign:", {
@@ -466,8 +543,8 @@ drawSection("Device Configuration", deviceConfig);
                 font: boldFont,
             });
             // Embed signatures
-            const createdBySignatureImage = await embedImage(pdfDoc, formData.page4.createdBySignature);
-            const approvedBySignatureImage = await embedImage(pdfDoc, formData.page4.approvedBySignature);
+            const createdBySignatureImage = await embedImage(pdfDoc, formData.page5.createdBySignature);
+            const approvedBySignatureImage = await embedImage(pdfDoc, formData.page5.approvedBySignature);
 
             currentPage.drawImage(createdBySignatureImage, {
                 x: 50,
@@ -498,6 +575,7 @@ const modifiedPdfBytes = await pdfDoc.save();
             localStorage.removeItem('page1Data');
             localStorage.removeItem('page2Data');
             localStorage.removeItem('page3Data');
+            localStorage.removeItem('page4Data');
         } catch (error) {
             console.error("Error modifying PDF:", error);
             alert("Error modifying PDF: " + error.message);
