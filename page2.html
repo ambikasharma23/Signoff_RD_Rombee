@@ -3,57 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <title>RB_Customer Onboarding Form - Page 2</title> -->
+    <title>RB_Customer Onboarding Form - Page 2</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .form-container {
-            max-width: 500px;
-            margin-left: auto;  /* Pushes the form to the right */
-            margin-right: 50px; /* Adds some space from the right edge */
-            padding: 20px 20px 20px 40px; 
-            border-radius: 10px;
-            background-color: black;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            text-align: left;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .form-group input[type="number"] {
-            width: 100%;
-        }
-        .button-container {
-            margin-top: 20px;
-        }
-        .button-container button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #007BFF;
-            color: white;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-        .button-container button:hover {
-            background-color: #0056b3;
-        }
         .hidden {
-            display: none; /* Class to hide elements */
+            display: none;
+        }
+        .disabled-field {
+            opacity: 0.6;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -77,7 +35,7 @@
             </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="coverageGroup">
             <label for="coverage">Coverage:</label>
             <select id="coverage" name="coverage">
                 <option value="">Select your answer</option>
@@ -115,11 +73,6 @@
             <input type="number" id="numberOfLanes" name="numberOfLanes">
         </div>
 
-        <div class="form-group">
-            <label for="supportedBatteryLife">Supported Battery Life:</label>
-            <input type="number" id="supportedBatteryLife" name="supportedBatteryLife">
-        </div>
-
         <div class="button-container">
             <button type="button" onclick="previousPage()">Back</button>
             <button type="button" onclick="nextPage()">Next</button>
@@ -131,19 +84,52 @@
     // Function to handle Use Case dropdown change
     function handleUseCaseChange() {
         const useCase = document.getElementById("useCase").value;
+        const coverageGroup = document.getElementById("coverageGroup");
         const shipmentUsingGroup = document.getElementById("shipmentUsingGroup");
         const reversePickupGroup = document.getElementById("reversePickupGroup");
         const numberOfLanesGroup = document.getElementById("numberOfLanesGroup");
 
-        // Hide fields if UC5 is selected
-        if (useCase === "UC5: BLE Based Asset Monitoring") {
+        // Reset all fields first
+        coverageGroup.classList.remove("disabled-field");
+        document.getElementById("coverage").disabled = false;
+        shipmentUsingGroup.classList.remove("disabled-field", "hidden");
+        document.getElementById("shipmentUsing").disabled = false;
+        reversePickupGroup.classList.remove("disabled-field", "hidden");
+        document.getElementById("reversePickup").disabled = false;
+        numberOfLanesGroup.classList.remove("disabled-field", "hidden");
+        document.getElementById("numberOfLanes").disabled = false;
+
+        // Handle UC4 (Sensor-less Shipment Monitoring)
+        if (useCase === "UC4: Sensor-less Shipment Monitoring") {
+            coverageGroup.classList.add("disabled-field");
+            document.getElementById("coverage").disabled = true;
+            document.getElementById("coverage").value = "";
+            
+            shipmentUsingGroup.classList.add("disabled-field");
+            document.getElementById("shipmentUsing").disabled = true;
+            document.getElementById("shipmentUsing").value = "";
+            
+            reversePickupGroup.classList.add("disabled-field");
+            document.getElementById("reversePickup").disabled = true;
+            document.getElementById("reversePickup").value = "";
+            
+            // Keep only Number of Lanes enabled
+            numberOfLanesGroup.classList.remove("disabled-field");
+            document.getElementById("numberOfLanes").disabled = false;
+        } 
+        // Handle UC5 (BLE Based Asset Monitoring)
+        else if (useCase === "UC5: BLE Based Asset Monitoring") {
             shipmentUsingGroup.classList.add("hidden");
+            document.getElementById("shipmentUsing").value = "";
+            
             reversePickupGroup.classList.add("hidden");
+            document.getElementById("reversePickup").value = "";
+            
             numberOfLanesGroup.classList.add("hidden");
-        } else {
-            shipmentUsingGroup.classList.remove("hidden");
-            reversePickupGroup.classList.remove("hidden");
-            numberOfLanesGroup.classList.remove("hidden");
+            document.getElementById("numberOfLanes").value = "";
+        } 
+        // Handle other cases
+        else {
             // Also handle the shipment using change in case it was changed
             handleShipmentUsingChange();
         }
@@ -157,6 +143,7 @@
         // Hide Reverse Pickup if Shipment Using is "One way"
         if (shipmentUsing === "One way") {
             reversePickupGroup.classList.add("hidden");
+            document.getElementById("reversePickup").value = "";
         } else {
             reversePickupGroup.classList.remove("hidden");
         }
@@ -179,7 +166,6 @@
             document.getElementById("shipmentUsing").value = formData.shipmentUsing || "";
             document.getElementById("reversePickup").value = formData.reversePickup || "";
             document.getElementById("numberOfLanes").value = formData.numberOfLanes || "";
-            document.getElementById("supportedBatteryLife").value = formData.supportedBatteryLife || "";
         }
         
         // Initial checks
@@ -194,7 +180,6 @@
             shipmentUsing: document.getElementById("shipmentUsing").value || "N/A",
             reversePickup: document.getElementById("reversePickup").value || "N/A",
             numberOfLanes: document.getElementById("numberOfLanes").value || "N/A",
-            supportedBatteryLife: document.getElementById("supportedBatteryLife").value || "N/A",
         };
 
         localStorage.setItem("page2Data", JSON.stringify(formData));
@@ -213,7 +198,6 @@
                 shipmentUsing: document.getElementById("shipmentUsing").value || "N/A",
                 reversePickup: document.getElementById("reversePickup").value || "N/A",
                 numberOfLanes: document.getElementById("numberOfLanes").value || "N/A",
-                supportedBatteryLife: document.getElementById("supportedBatteryLife").value || "N/A",
             };
 
             // Save form data to localStorage
