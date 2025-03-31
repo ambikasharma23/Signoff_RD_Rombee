@@ -6,79 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RB_Customer Onboarding Form - Page 3</title>
     <link rel="stylesheet" href="styles.css">
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-
-        .form-container {
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: 50px;
-            padding: 20px 20px 20px 40px;
-            border-radius: 10px;
-            background-color: black;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            text-align: left;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .form-group input[type="checkbox"],
-        .form-group input[type="radio"] {
-            width: auto;
-            margin-right: 10px;
-        }
-
-        .config-heading {
-            font-weight: bold;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            text-align: left;
-        }
-
-        .button-container {
-            text-align: right;
-            margin-top: 20px;
-        }
-
-        .button-container button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #007BFF;
-            color: white;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .button-container button:hover {
-            background-color: #0056b3;
-        }
-
-        .hidden {
-            display: none;
-        }
-    </style>
     <!-- Include pdf-lib Library -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <!-- Include FileSaver.js for saving files -->
@@ -121,7 +48,7 @@
                 <!-- WiFi and GSM Checkboxes (Hidden for Router) -->
                 <div id="wifiGsmSection">
                     <label><input type="checkbox" name="locations" value="WiFi"> WiFi</label>
-                    <label><input type="checkbox" name="locations" value="GSM"> GSM</label>
+                    <!-- <label><input type="checkbox" name="locations" value="GSM"> GSM</label> -->
                 </div>
             </div>
 
@@ -146,8 +73,8 @@
             <!-- BLE -->
             <div id="bleSection" class="form-group hidden">
                 <div class="config-heading">Do You Want To Use BLE Receiver?</div>
-                <label><input type="radio" name="ble" value="ON"> ON</label>
-                <label><input type="radio" name="ble" value="OFF"> OFF</label>
+                <label><input type="radio" name="ble" value="ON"> Yes</label>
+                <label><input type="radio" name="ble" value="OFF"> No</label>
             </div>
              <!-- Sample Mode -->
   <div id="sampleModeSection" class="form-group hidden">
