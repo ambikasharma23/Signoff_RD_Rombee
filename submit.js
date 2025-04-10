@@ -10,7 +10,7 @@ function generateSensorMask(tempSensor, humiditySensor, ambientSensor) {
 }
 
 // Function to generate commands
-function generatingCommands(hostingLocation, locations, sensors, interrupt, ble, sampleMode, reportInterval, sampleInterval, prf, deviceType, latitude, longitude, motionInterval, stanstillInterval) {
+function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,captureFrequency,reportFrequency, prf, deviceType, latitude, longitude, motionInterval, stanstillInterval) {
     let commands = [];
 
     if (deviceType === "Router") {
@@ -102,18 +102,28 @@ function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,
         } else {
             commands.push("AT+BTENABLE=0,20");
         }
-
-        if (sampleMode === "ON") {
-            commands.push(`AT+SAMPLEMODE=1,1 & AT+TIMEGAP=0,${reportInterval},1,${sampleInterval}`);
-        } else {
-            commands.push(`AT+SAMPLEMODE=0,0 & AT+TIMEGAP=0,${prf},1,${prf}`);
+        if (reportFrequency && captureFrequency) {
+            if (reportFrequency === captureFrequency) {
+                // If both values are equal
+                commands.push(`AT+TIMEGAP=0,${reportFrequency},1,${captureFrequency} & AT+SAMPLEMODE=0,0`);
+            } else {
+                // If values are different
+                commands.push(`AT+TIMEGAP=0,${reportFrequency},1,${captureFrequency} & AT+SAMPLEMODE=1,1`);
+            }
         }
+
+        // if (sampleMode === "ON") {
+        //     commands.push(`AT+SAMPLEMODE=1,1 & AT+TIMEGAP=0,${reportInterval},1,${sampleInterval}`);
+        // } else {
+        //     commands.push(`AT+SAMPLEMODE=0,0 & AT+TIMEGAP=0,${prf},1,${prf}`);
+        // }
     }
 
     return commands;
 }
 
 async function submitForm() {
+    console.log(generatingCommands)
     try{
         function convertImageToPNG(file) {
             return new Promise((resolve, reject) => {
@@ -179,9 +189,11 @@ async function submitForm() {
             formData.page3.sensors,
             formData.page3.interrupt,
             formData.page3.ble,
-            formData.page3.sampleMode,
-            formData.page3.reportInterval,
-            formData.page3.sampleInterval,
+            formData.page3.captureFrequency,
+            formData.page3.reportFrequency,
+            // formData.page3.sampleMode,
+            // formData.page3.reportInterval,
+            // formData.page3.sampleInterval,
             formData.page3.prf,
             formData.page3.deviceType,
             formData.page3.latitude,
@@ -219,7 +231,7 @@ async function embedImage(pdfDoc, base64Image) {
             let yPos = height - 100;
 // Format the text with proper capitalization
 // Format the name with proper capitalization
-const formattedName = formData.page1.userName
+const formattedName = formData.page1.portalAccountName
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
@@ -439,14 +451,17 @@ if (formData.page3.deviceType === "Router") {
     deviceConfig["Select the sensors you want ON for your use case: "] = formData.page3.sensors?.length > 0 ? formData.page3.sensors.join(", ") : "N/A";
     deviceConfig["Do you want to measure?: "] = formData.page3.interrupt?.length > 0 ? formData.page3.interrupt.join(", ") : "N/A";
     deviceConfig["Do you want to use BLE Receiver: "] = formData.page3.ble || "NA";
-    deviceConfig["Sample Mode: "] = formData.page3.sampleMode || "NA";
+    deviceConfig["Enter how often device should report to cloud:"] = formData.page3.reportFrequency || "NA";
+    deviceConfig["Enter how often device should capture sensor data: "] = formData.page3.captureFrequency || "NA";
+
+    // deviceConfig["Sample Mode: "] = formData.page3.sampleMode || "NA";
     
-    if (formData.page3.sampleMode === "ON") {
-        deviceConfig["Report Interval: "] = formData.page3.reportInterval || "NA";
-        deviceConfig["Sample Interval: "] = formData.page3.sampleInterval || "NA";
-    } else {
-        deviceConfig["PRF: "] = formData.page3.prf || "NA";
-    }
+    // if (formData.page3.sampleMode === "ON") {
+    //     deviceConfig["Report Interval: "] = formData.page3.reportInterval || "NA";
+    //     deviceConfig["Sample Interval: "] = formData.page3.sampleInterval || "NA";
+    // } else {
+    //     deviceConfig["PRF: "] = formData.page3.prf || "NA";
+    // }
 }
 drawSection("Device Configuration", deviceConfig);
 
