@@ -10,6 +10,11 @@
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <!-- Include FileSaver.js for saving files -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        .interval-section {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -76,28 +81,22 @@
                 <label><input type="radio" name="ble" value="ON"> Yes</label>
                 <label><input type="radio" name="ble" value="OFF"> No</label>
             </div>
-             <!-- Sample Mode -->
-  <div id="sampleModeSection" class="form-group hidden">
-    <div class="config-heading">Sample Mode:</div>
-    <label><input type="radio" name="sampleMode" value="ON" onclick="handleSampleModeChange()"> ON</label>
-    <label><input type="radio" name="sampleMode" value="OFF" onclick="handleSampleModeChange()"> OFF</label>
-</div>
 
-<!-- Report Interval and Sample Interval (Shown when Sample Mode is ON) -->
-<div id="reportIntervalSection" class="form-group hidden">
-    <label for="reportInterval">Enter Report Interval (In seconds):</label>
-    <input type="number" id="reportInterval" name="reportInterval">
-</div>
-<div id="sampleIntervalSection" class="form-group hidden">
-    <label for="sampleInterval">Enter Sample Interval (In seconds):</label>
-    <input type="number" id="sampleInterval" name="sampleInterval">
-</div>
+            <!-- Reporting and Capture Intervals (for BSF/BeeLabel/BAG 5G) -->
+            <div id="reportCaptureSection" class="hidden">
+                <!-- Cloud Reporting Interval -->
+                <div class="form-group interval-section">
+                    <label for="reportFrequency">Enter how often device should report to cloud (in seconds):</label>
+                    <input type="number" id="reportFrequency" name="reportFrequency">
+                </div>
+                
+                <!-- Sensor Capture Interval -->
+                <div class="form-group interval-section">
+                    <label for="captureFrequency">Enter how often device should capture sensor data (in seconds):</label>
+                    <input type="number" id="captureFrequency" name="captureFrequency">
+                </div>
+            </div>
 
-<!-- PRF (Shown when Sample Mode is OFF) -->
-<div id="prfSection" class="form-group hidden">
-    <label for="prf">Enter PRF (In seconds):</label>
-    <input type="number" id="prf" name="prf">
-</div>
             <!-- PRF Checkbox (Only for Solar) -->
             <div id="prfCheckboxSection" class="form-group hidden">
                 <div class="config-heading">Enter How Often The Device Should Report To The Cloud:</div>
@@ -106,9 +105,9 @@
 
             <!-- Motion and Stanstill Input Fields (Only for Solar when PRF is checked) -->
             <div id="motionStanstillSection" class="form-group hidden">
-                <label for="motionInterval">Motion Interval (In seconds):</label>
+                <label for="motionInterval">Enter how often device should report to cloud when moving:</label>
                 <input type="number" id="motionInterval" name="motionInterval">
-                <label for="stanstillInterval">Stanstill Interval (In seconds):</label>
+                <label for="stanstillInterval">Enter how often device should report to cloud when standstill:</label>
                 <input type="number" id="stanstillInterval" name="stanstillInterval">
             </div>
 
@@ -157,14 +156,11 @@
 
         // Function to handle device type change
         function handleDeviceTypeChange() {
-           
-
             const deviceType = document.getElementById("deviceType").value;
             const locationsSection = document.getElementById("locationsSection");
             const sensorsSection = document.getElementById("sensorsSection");
             const interruptSection = document.getElementById("interruptSection");
             const bleSection = document.getElementById("bleSection");
-            const sampleModeSection = document.getElementById("sampleModeSection");
             const wifiGsmSection = document.getElementById("wifiGsmSection");
             const humiditySensor = document.getElementById("humiditySensor");
             const gpsCoordinatesSection = document.getElementById("gpsCoordinatesSection");
@@ -172,6 +168,8 @@
             const motionStanstillSection = document.getElementById("motionStanstillSection");
             const shockCheckboxLabel = document.getElementById("shockCheckboxLabel");
             const prfSection = document.getElementById("prfSection");
+            const reportCaptureSection = document.getElementById("reportCaptureSection");
+            
             // Hide all sections initially
             locationsSection.classList.add("hidden");
             sensorsSection.classList.add("hidden");
@@ -180,7 +178,7 @@
             prfCheckboxSection.classList.add("hidden");
             motionStanstillSection.classList.add("hidden");
             gpsCoordinatesSection.classList.add("hidden");
-            sampleModeSection.classList.add("hidden");
+            reportCaptureSection.classList.add("hidden");
 
             // Show sections based on device type
             if (deviceType === "BSF") {
@@ -191,8 +189,7 @@
                 bleSection.classList.remove("hidden");
                 wifiGsmSection.classList.remove("hidden");
                 shockCheckboxLabel.style.display = "block"; // Show Shock checkbox
-                sampleModeSection.classList.remove("hidden");
-                
+                reportCaptureSection.classList.remove("hidden"); // Show report/capture intervals
             } else if (deviceType === "BeeLabel") {
                 // Show all options except Humidity
                 locationsSection.classList.remove("hidden");
@@ -202,7 +199,7 @@
                 wifiGsmSection.classList.remove("hidden");
                 humiditySensor.disabled = true;
                 shockCheckboxLabel.style.display = "block"; // Show Shock checkbox
-                sampleModeSection.classList.remove("hidden");
+                reportCaptureSection.classList.remove("hidden"); // Show report/capture intervals
             } else if (deviceType === "BAG 5G") {
                 // Show all options except Humidity and BLE
                 locationsSection.classList.remove("hidden");
@@ -212,7 +209,7 @@
                 humiditySensor.disabled = true;
                 bleSection.classList.add("hidden");
                 shockCheckboxLabel.style.display = "block"; // Show Shock checkbox
-                sampleModeSection.classList.remove("hidden");
+                reportCaptureSection.classList.remove("hidden"); // Show report/capture intervals
             } else if (deviceType === "Solar") {
                 // Show BLE, PRF checkbox, and Interrupt (only Ambient Light)
                 bleSection.classList.remove("hidden");
@@ -224,35 +221,13 @@
                 wifiGsmSection.classList.add("hidden");
                 shockCheckboxLabel.style.display = "none"; // Hide Shock checkbox
             } else if (deviceType === "Router") {
-        locationsSection.classList.remove("hidden");
-        wifiGsmSection.classList.add("hidden");
-        shockCheckboxLabel.style.display = "block"; 
-        prfSection.classList.remove("hidden"); // Show Shock checkbox
-        
-    }
-    
-        }
-// Function to handle sample mode change
-function handleSampleModeChange() {
-            const sampleMode = document.querySelector('input[name="sampleMode"]:checked').value;
-            const reportIntervalSection = document.getElementById("reportIntervalSection");
-            const sampleIntervalSection = document.getElementById("sampleIntervalSection");
-            const prfSection = document.getElementById("prfSection");
-
-            if (sampleMode === "ON") {
-                // Show Report Interval and Sample Interval
-                reportIntervalSection.classList.remove("hidden");
-                sampleIntervalSection.classList.remove("hidden");
-                // Hide PRF
-                prfSection.classList.add("hidden");
-            } else if (sampleMode === "OFF") {
-                // Show PRF
-                prfSection.classList.remove("hidden");
-                // Hide Report Interval and Sample Interval
-                reportIntervalSection.classList.add("hidden");
-                sampleIntervalSection.classList.add("hidden");
+                locationsSection.classList.remove("hidden");
+                wifiGsmSection.classList.add("hidden");
+                shockCheckboxLabel.style.display = "block"; 
+                prfSection.classList.remove("hidden"); // Show Shock checkbox
             }
         }
+
         // Function to handle PRF checkbox change
         function handlePRFCheckboxChange() {
             const prfCheckbox = document.querySelector('input[name="prfCheckbox"]');
@@ -282,6 +257,7 @@ function handleSampleModeChange() {
         function previousPage() {
             window.location.href = "page2.html";
         }
+        
         function nextForm() {
             const formData = {
                 deviceType: document.getElementById("deviceType").value,
@@ -289,10 +265,8 @@ function handleSampleModeChange() {
                 sensors: [],
                 interrupt: [],
                 ble: document.querySelector('input[name="ble"]:checked')?.value || null,
-                sampleMode: document.querySelector('input[name="sampleMode"]:checked')?.value || null,
-                reportInterval: document.getElementById("reportInterval").value || null,
-                sampleInterval: document.getElementById("sampleInterval").value || null,
-                prf: document.getElementById("prf").value || null,
+                reportFrequency: document.getElementById("reportFrequency").value || null,
+                captureFrequency: document.getElementById("captureFrequency").value || null,
                 prfCheckbox: document.querySelector('input[name="prfCheckbox"]')?.checked || false,
                 motionInterval: document.getElementById("motionInterval").value || null,
                 stanstillInterval: document.getElementById("stanstillInterval").value || null,
@@ -318,76 +292,66 @@ function handleSampleModeChange() {
         }
         
         function restoreFormData() {
-    const savedData = JSON.parse(localStorage.getItem("page3Data"));
-    if (!savedData) return; // Exit if no saved data exists
+            const savedData = JSON.parse(localStorage.getItem("page3Data"));
+            if (!savedData) return; // Exit if no saved data exists
 
-    // Restore Device Type
-    const deviceType = document.getElementById("deviceType");
-    deviceType.value = savedData.deviceType || "";
-    handleDeviceTypeChange(); // Update visibility of sections based on device type
+            // Restore Device Type
+            const deviceType = document.getElementById("deviceType");
+            deviceType.value = savedData.deviceType || "";
+            handleDeviceTypeChange(); // Update visibility of sections based on device type
 
-    // Restore Locations
-    savedData.locations.forEach((location) => {
-        const checkbox = document.querySelector(`input[name="locations"][value="${location}"]`);
-        if (checkbox) checkbox.checked = true;
-    });
-    handleGPSChange(); // Update GPS coordinates visibility
+            // Restore Locations
+            savedData.locations.forEach((location) => {
+                const checkbox = document.querySelector(`input[name="locations"][value="${location}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+            handleGPSChange(); // Update GPS coordinates visibility
 
-    // Restore Sensors
-    savedData.sensors.forEach((sensor) => {
-        const checkbox = document.querySelector(`input[name="sensors"][value="${sensor}"]`);
-        if (checkbox) checkbox.checked = true;
-    });
+            // Restore Sensors
+            savedData.sensors.forEach((sensor) => {
+                const checkbox = document.querySelector(`input[name="sensors"][value="${sensor}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
 
-    // Restore Interrupt
-    savedData.interrupt.forEach((interrupt) => {
-        const checkbox = document.querySelector(`input[name="interrupt"][value="${interrupt}"]`);
-        if (checkbox) checkbox.checked = true;
-    });
+            // Restore Interrupt
+            savedData.interrupt.forEach((interrupt) => {
+                const checkbox = document.querySelector(`input[name="interrupt"][value="${interrupt}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
 
-    // Restore BLE
-    const bleRadio = document.querySelector(`input[name="ble"][value="${savedData.ble}"]`);
-    if (bleRadio) bleRadio.checked = true;
+            // Restore BLE
+            const bleRadio = document.querySelector(`input[name="ble"][value="${savedData.ble}"]`);
+            if (bleRadio) bleRadio.checked = true;
 
-    // Restore Sample Mode
-    const sampleModeRadio = document.querySelector(`input[name="sampleMode"][value="${savedData.sampleMode}"]`);
-    if (sampleModeRadio) sampleModeRadio.checked = true;
-    handleSampleModeChange(); // Update visibility of intervals
+            // Restore PRF Checkbox
+            const prfCheckbox = document.querySelector('input[name="prfCheckbox"]');
+            if (prfCheckbox) prfCheckbox.checked = savedData.prfCheckbox;
+            handlePRFCheckboxChange(); // Update visibility of motion/stanstill intervals
 
-    // Restore Report Interval and Sample Interval
-    if (savedData.reportInterval) {
-        document.getElementById("reportInterval").value = savedData.reportInterval;
-    }
-    if (savedData.sampleInterval) {
-        document.getElementById("sampleInterval").value = savedData.sampleInterval;
-    }
+            // Restore Report and Capture Frequencies
+            if (savedData.reportFrequency) {
+                document.getElementById("reportFrequency").value = savedData.reportFrequency;
+            }
+            if (savedData.captureFrequency) {
+                document.getElementById("captureFrequency").value = savedData.captureFrequency;
+            }
 
-    // Restore PRF
-    if (savedData.prf) {
-        document.getElementById("prf").value = savedData.prf;
-    }
+            // Restore Motion and Stanstill Intervals
+            if (savedData.motionInterval) {
+                document.getElementById("motionInterval").value = savedData.motionInterval;
+            }
+            if (savedData.stanstillInterval) {
+                document.getElementById("stanstillInterval").value = savedData.stanstillInterval;
+            }
 
-    // Restore PRF Checkbox
-    const prfCheckbox = document.querySelector('input[name="prfCheckbox"]');
-    if (prfCheckbox) prfCheckbox.checked = savedData.prfCheckbox;
-    handlePRFCheckboxChange(); // Update visibility of motion/stanstill intervals
-
-    // Restore Motion and Stanstill Intervals
-    if (savedData.motionInterval) {
-        document.getElementById("motionInterval").value = savedData.motionInterval;
-    }
-    if (savedData.stanstillInterval) {
-        document.getElementById("stanstillInterval").value = savedData.stanstillInterval;
-    }
-
-    // Restore GPS Coordinates
-    if (savedData.latitude) {
-        document.getElementById("latitude").value = savedData.latitude;
-    }
-    if (savedData.longitude) {
-        document.getElementById("longitude").value = savedData.longitude;
-    }
-}
+            // Restore GPS Coordinates
+            if (savedData.latitude) {
+                document.getElementById("latitude").value = savedData.latitude;
+            }
+            if (savedData.longitude) {
+                document.getElementById("longitude").value = savedData.longitude;
+            }
+        }
 
         window.onload = function () {
             populateDeviceTypeDropdown(); // Populate dropdown based on Use Case
