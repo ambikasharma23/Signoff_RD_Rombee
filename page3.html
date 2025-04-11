@@ -82,33 +82,25 @@
                 <label><input type="radio" name="ble" value="OFF"> No</label>
             </div>
 
-            <!-- Reporting and Capture Intervals (for BSF/BeeLabel/BAG 5G) -->
+            <!-- Reporting and Capture Intervals -->
             <div id="reportCaptureSection" class="hidden">
                 <!-- Cloud Reporting Interval -->
-                <div class="form-group interval-section">
-                    <label for="reportFrequency">Enter how often device should report to cloud (in seconds):</label>
+                <div class="form-group interval-section" id="reportIntervalSection">
+                    <label id="reportFrequencyLabel">Enter how often device should report to cloud (in seconds):</label>
                     <input type="number" id="reportFrequency" name="reportFrequency">
                 </div>
                 
-                <!-- Sensor Capture Interval -->
-                <div class="form-group interval-section">
+                <!-- Sensor Capture Interval (Hidden for Solar and Router) -->
+                <div class="form-group interval-section" id="captureIntervalSection">
                     <label for="captureFrequency">Enter how often device should capture sensor data (in seconds):</label>
                     <input type="number" id="captureFrequency" name="captureFrequency">
                 </div>
-            </div>
 
-            <!-- PRF Checkbox (Only for Solar) -->
-            <div id="prfCheckboxSection" class="form-group hidden">
-                <div class="config-heading">Enter How Often The Device Should Report To The Cloud:</div>
-                <label><input type="checkbox" name="prfCheckbox" value="PRF" onchange="handlePRFCheckboxChange()"> PRF</label>
-            </div>
-
-            <!-- Motion and Stanstill Input Fields (Only for Solar when PRF is checked) -->
-            <div id="motionStanstillSection" class="form-group hidden">
-                <label for="motionInterval">Enter how often device should report to cloud when moving:</label>
-                <input type="number" id="motionInterval" name="motionInterval">
-                <label for="stanstillInterval">Enter how often device should report to cloud when standstill:</label>
-                <input type="number" id="stanstillInterval" name="stanstillInterval">
+                <!-- Standstill Reporting Interval (Only for Solar and Router) -->
+                <div class="form-group interval-section hidden" id="standstillIntervalSection">
+                    <label for="stanstillInterval">Enter how often device should report to cloud when standstill (in seconds):</label>
+                    <input type="number" id="stanstillInterval" name="stanstillInterval">
+                </div>
             </div>
 
             <!-- Navigation Buttons -->
@@ -164,21 +156,25 @@
             const wifiGsmSection = document.getElementById("wifiGsmSection");
             const humiditySensor = document.getElementById("humiditySensor");
             const gpsCoordinatesSection = document.getElementById("gpsCoordinatesSection");
-            const prfCheckboxSection = document.getElementById("prfCheckboxSection");
-            const motionStanstillSection = document.getElementById("motionStanstillSection");
             const shockCheckboxLabel = document.getElementById("shockCheckboxLabel");
-            const prfSection = document.getElementById("prfSection");
             const reportCaptureSection = document.getElementById("reportCaptureSection");
+            const reportIntervalSection = document.getElementById("reportIntervalSection");
+            const captureIntervalSection = document.getElementById("captureIntervalSection");
+            const standstillIntervalSection = document.getElementById("standstillIntervalSection");
+            const reportFrequencyLabel = document.getElementById("reportFrequencyLabel");
             
             // Hide all sections initially
             locationsSection.classList.add("hidden");
             sensorsSection.classList.add("hidden");
             interruptSection.classList.add("hidden");
             bleSection.classList.add("hidden");
-            prfCheckboxSection.classList.add("hidden");
-            motionStanstillSection.classList.add("hidden");
-            gpsCoordinatesSection.classList.add("hidden");
             reportCaptureSection.classList.add("hidden");
+            gpsCoordinatesSection.classList.add("hidden");
+
+            // Reset all interval sections to default state
+            captureIntervalSection.classList.remove("hidden");
+            standstillIntervalSection.classList.add("hidden");
+            reportFrequencyLabel.textContent = "Enter how often device should report to cloud (in seconds):";
 
             // Show sections based on device type
             if (deviceType === "BSF") {
@@ -211,32 +207,32 @@
                 shockCheckboxLabel.style.display = "block"; // Show Shock checkbox
                 reportCaptureSection.classList.remove("hidden"); // Show report/capture intervals
             } else if (deviceType === "Solar") {
-                // Show BLE, PRF checkbox, and Interrupt (only Ambient Light)
+                // Show BLE and modified report intervals
                 bleSection.classList.remove("hidden");
-                prfCheckboxSection.classList.remove("hidden");
                 interruptSection.classList.remove("hidden");
+                reportCaptureSection.classList.remove("hidden");
+                
+                // Modify labels for Solar device
+                reportFrequencyLabel.textContent = "Enter how often device should report to cloud when moving (in seconds):";
+                captureIntervalSection.classList.add("hidden");
+                standstillIntervalSection.classList.remove("hidden");
+                
                 // Hide other options
                 locationsSection.classList.add("hidden");
                 sensorsSection.classList.add("hidden");
                 wifiGsmSection.classList.add("hidden");
                 shockCheckboxLabel.style.display = "none"; // Hide Shock checkbox
             } else if (deviceType === "Router") {
+                // Show locations and modified report intervals
                 locationsSection.classList.remove("hidden");
                 wifiGsmSection.classList.add("hidden");
-                shockCheckboxLabel.style.display = "block"; 
-                prfSection.classList.remove("hidden"); // Show Shock checkbox
-            }
-        }
-
-        // Function to handle PRF checkbox change
-        function handlePRFCheckboxChange() {
-            const prfCheckbox = document.querySelector('input[name="prfCheckbox"]');
-            const motionStanstillSection = document.getElementById("motionStanstillSection");
-
-            if (prfCheckbox.checked) {
-                motionStanstillSection.classList.remove("hidden");
-            } else {
-                motionStanstillSection.classList.add("hidden");
+                shockCheckboxLabel.style.display = "block";
+                reportCaptureSection.classList.remove("hidden");
+                
+                // Modify labels for Router device
+                reportFrequencyLabel.textContent = "Enter how often device should report to cloud when moving (in seconds):";
+                captureIntervalSection.classList.add("hidden");
+                standstillIntervalSection.classList.remove("hidden");
             }
         }
 
@@ -267,8 +263,6 @@
                 ble: document.querySelector('input[name="ble"]:checked')?.value || null,
                 reportFrequency: document.getElementById("reportFrequency").value || null,
                 captureFrequency: document.getElementById("captureFrequency").value || null,
-                prfCheckbox: document.querySelector('input[name="prfCheckbox"]')?.checked || false,
-                motionInterval: document.getElementById("motionInterval").value || null,
                 stanstillInterval: document.getElementById("stanstillInterval").value || null,
                 latitude: document.getElementById("latitude").value || null,
                 longitude: document.getElementById("longitude").value || null,
@@ -323,11 +317,6 @@
             const bleRadio = document.querySelector(`input[name="ble"][value="${savedData.ble}"]`);
             if (bleRadio) bleRadio.checked = true;
 
-            // Restore PRF Checkbox
-            const prfCheckbox = document.querySelector('input[name="prfCheckbox"]');
-            if (prfCheckbox) prfCheckbox.checked = savedData.prfCheckbox;
-            handlePRFCheckboxChange(); // Update visibility of motion/stanstill intervals
-
             // Restore Report and Capture Frequencies
             if (savedData.reportFrequency) {
                 document.getElementById("reportFrequency").value = savedData.reportFrequency;
@@ -336,10 +325,7 @@
                 document.getElementById("captureFrequency").value = savedData.captureFrequency;
             }
 
-            // Restore Motion and Stanstill Intervals
-            if (savedData.motionInterval) {
-                document.getElementById("motionInterval").value = savedData.motionInterval;
-            }
+            // Restore Standstill Interval
             if (savedData.stanstillInterval) {
                 document.getElementById("stanstillInterval").value = savedData.stanstillInterval;
             }
