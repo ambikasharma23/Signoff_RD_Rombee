@@ -11,6 +11,8 @@ function generateSensorMask(tempSensor, humiditySensor, ambientSensor) {
 
 // Function to generate commands
 function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,captureFrequency,reportFrequency, prf, deviceType, latitude, longitude, motionInterval, stanstillInterval) {
+    console.log("motioninterval",motionInterval);
+    console.log("stanstillinterval",stanstillInterval);
     let commands = [];
 
     if (deviceType === "Router") {
@@ -20,7 +22,7 @@ function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,
             commands.push(`RBCFG:VVRMT;GPS,1,${latitude},${longitude},101;__SEQNUM__$`);
         }
     } else if (deviceType === "Solar") {
-        commands.push(`TIMER,0000,${motionInterval}:${stanstillInterval}:0:0#`);
+        commands.push(`TIMER,0000,${reportFrequency}:${stanstillInterval}:0:0#`);
     
         if (interrupt.includes("Ambient Light")) {
             commands.push("ALARM_SET,1,1,0,0#");
