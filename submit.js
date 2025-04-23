@@ -16,7 +16,7 @@ function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,
     let commands = [];
 
     if (deviceType === "Router") {
-        commands.push(`RBCFG:VVRMT;BSC,1,G2,9999,${prf},5242,-99;__SEQNUM__$`);
+        commands.push(`RBCFG:VVRMT;BSC,1,G2,9999,${reportFrequency},5242,-99;__SEQNUM__$`);
 
         if (locations.includes("GPS")) {
             commands.push(`RBCFG:VVRMT;GPS,1,${latitude},${longitude},101;__SEQNUM__$`);
@@ -435,7 +435,7 @@ const deviceConfig = {
 if (formData.page3.deviceType === "Router") {
     // Router specific fields
     deviceConfig["Locations: "] = formData.page3.locations?.length > 0 ? formData.page3.locations.join(", ") : "N/A";
-    deviceConfig["PRF: "] = formData.page3.prf || "NA";
+    deviceConfig["PRF: "] = formData.page3.reportFrequency|| "NA";
     
     if (formData.page3.locations?.includes("GPS")) {
         deviceConfig["Latitude: "] = formData.page3.latitude || "NA";
