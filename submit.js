@@ -530,8 +530,8 @@ drawSection("Device Configuration", deviceConfig);
             yPos -= boxPadding;
             yPos -= lineHeight * 3;
             drawSection("Product Category", {
-                "Sensor based Shipment Monitoring: ": formData.page4.shipmentType,
-                "Inventories: ": formData.page4.inventoryType,
+                "Sensor based Shipment Monitoring: ": formData.page4.shipmentType || NA,
+                "Inventories: ": formData.page4.inventoryType || NA,
                 
             });
             yPos -= lineHeight * 2;
