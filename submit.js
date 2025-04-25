@@ -10,9 +10,9 @@ function generateSensorMask(tempSensor, humiditySensor, ambientSensor) {
 }
 
 // Function to generate commands
-function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,captureFrequency,reportFrequency, prf, deviceType, latitude, longitude, motionInterval, stanstillInterval) {
-    console.log("motioninterval",motionInterval);
-    console.log("stanstillinterval",stanstillInterval);
+function generatingCommands(hostingLocation, locations, sensors, interrupt, ble, captureFrequency, reportFrequency, prf, deviceType, latitude, longitude, motionInterval, stanstillInterval) {
+    console.log("motioninterval", motionInterval);
+    console.log("stanstillinterval", stanstillInterval);
     let commands = [];
 
     if (deviceType === "Router") {
@@ -23,7 +23,7 @@ function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,
         }
     } else if (deviceType === "Solar") {
         commands.push(`TIMER,0000,${reportFrequency}:${stanstillInterval}:0:0#`);
-    
+
         if (interrupt.includes("Ambient Light")) {
             commands.push("ALARM_SET,1,1,0,0#");
             commands.push("ALARM_SET,21,1,0,0#");
@@ -31,7 +31,7 @@ function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,
             commands.push("ALARM_SET,1,0,0,0#");
             commands.push("ALARM_SET,21,0,0,0#");
         }
-    
+
         if (ble === "ON") {
             commands.push("BLESCAN,1#");
             commands.push("BLESCAN,12,60,30#");
@@ -39,12 +39,12 @@ function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,
         } else {
             commands.push("BLESCAN,0#");
         }
-    
+
         // Add hosting location specific commands
         const page1Data = localStorage.getItem("page1Data");
         if (page1Data) {
             const { hostingLocation } = JSON.parse(page1Data);
-            
+
             if (hostingLocation === "RB_US_Portal") {
                 commands.push("IP,34.202.96.232,30008#");
                 commands.push("IP2,34.233.153.141,30008#");
@@ -53,7 +53,7 @@ function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,
                 commands.push("IP2,18.193.212.52,30008#");
             }
         }
-    }else {
+    } else {
         // Existing logic for other device types
         if (hostingLocation === "RB_US_Portal") {
             commands.push("AT+IP=0,aovx-listener.roambee.com,30009");
@@ -62,15 +62,15 @@ function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,
         }
 
         if (locations.includes("GPS")) {
-            commands.push("AT+GNSSENABLE=1");
+            commands.push("AT+GNSSEN/ABLE=1");
         } else {
-            commands.push("AT+GNSSENABLE=0");
+            commands.push("AT+GNSSEN/ABLE=0");
         }
 
         if (locations.includes("WIFI")) {
-            commands.push("AT+WIFIENABLE=1,10");
+            commands.push("AT+WIFIEN/ABLE=1,10");
         } else {
-            commands.push("AT+WIFIENABLE=0,10");
+            commands.push("AT+WIFIEN/ABLE=0,10");
         }
 
         const tempSensor = sensors.includes("Temperature");
@@ -100,9 +100,9 @@ function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,
         }
 
         if (ble === "ON") {
-            commands.push("AT+BTENABLE=1,20");
+            commands.push("AT+BTEN/ABLE=1,20");
         } else {
-            commands.push("AT+BTENABLE=0,20");
+            commands.push("AT+BTEN/ABLE=0,20");
         }
         if (reportFrequency && captureFrequency) {
             if (reportFrequency === captureFrequency) {
@@ -126,7 +126,7 @@ function generatingCommands(hostingLocation, locations, sensors, interrupt, ble,
 
 async function submitForm() {
     console.log(generatingCommands)
-    try{
+    try {
         function convertImageToPNG(file) {
             return new Promise((resolve, reject) => {
                 const img = new Image();
@@ -162,28 +162,28 @@ async function submitForm() {
             const imageBytes = await fetch(base64Image).then(res => res.arrayBuffer());
             return pdfDoc.embedPng(imageBytes);
         }
-    const page1Data = JSON.parse(localStorage.getItem("page1Data"));
-    const page2Data = JSON.parse(localStorage.getItem("page2Data"));
-    const page3Data = JSON.parse(localStorage.getItem("page3Data"));
-    const page4Data = JSON.parse(localStorage.getItem("page4Data"));
-    const page5Data = {
-        documentCreated: document.getElementById('documentCreated').value,
-        lastUpdated: document.getElementById('lastUpdated').value,
-        updatedBy: document.getElementById('updatedBy').value,
-        createdByName: document.getElementById('createdByName').value,
-        createdBySignature: await convertImageToPNG(document.getElementById('createdBySignature').files[0]),
-        approvedByName: document.getElementById('approvedByName').value,
-        approvedBySignature: await convertImageToPNG(document.getElementById('approvedBySignature').files[0]),
-        approvalDate: document.getElementById('approvalDate').value
-    };
-   
+        const page1Data = JSON.parse(localStorage.getItem("page1Data"));
+        const page2Data = JSON.parse(localStorage.getItem("page2Data"));
+        const page3Data = JSON.parse(localStorage.getItem("page3Data"));
+        const page4Data = JSON.parse(localStorage.getItem("page4Data"));
+        const page5Data = {
+            documentCreated: document.getElementById('documentCreated').value,
+            lastUpdated: document.getElementById('lastUpdated').value,
+            updatedBy: document.getElementById('updatedBy').value,
+            createdByName: document.getElementById('createdByName').value,
+            createdBySignature: await convertImageToPNG(document.getElementById('createdBySignature').files[0]),
+            approvedByName: document.getElementById('approvedByName').value,
+            approvedBySignature: await convertImageToPNG(document.getElementById('approvedBySignature').files[0]),
+            approvalDate: document.getElementById('approvalDate').value
+        };
+
         const formData = {
             page1: page1Data,
             page2: page2Data,
             page3: page3Data,
-            page4:page4Data, 
-            page5: page5Data,      
-    };
+            page4: page4Data,
+            page5: page5Data,
+        };
 
         const commandsList = generatingCommands(
             formData.page1.hostingLocation,
@@ -215,11 +215,11 @@ async function submitForm() {
                 pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold),
                 pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica)
             ]);
-// Function to embed an image in the PDF
-async function embedImage(pdfDoc, base64Image) {
-    const imageBytes = await fetch(base64Image).then(res => res.arrayBuffer());
-    return pdfDoc.embedPng(imageBytes);
-}
+            // Function to embed an image in the PDF
+            async function embedImage(pdfDoc, base64Image) {
+                const imageBytes = await fetch(base64Image).then(res => res.arrayBuffer());
+                return pdfDoc.embedPng(imageBytes);
+            }
             const pages = pdfDoc.getPages();
             let currentPage = pages[0];
             const { width, height } = currentPage.getSize();
@@ -231,97 +231,97 @@ async function embedImage(pdfDoc, base64Image) {
             const boxColor = PDFLib.rgb(1, 222 / 255, 89 / 255);
             const bottomMargin = 50;
             let yPos = height - 100;
-// Format the text with proper capitalization
-// Format the name with proper capitalization
-const formattedName = formData.page1.portalAccountName
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+            // Format the text with proper capitalization
+            // Format the name with proper capitalization
+            const formattedName = formData.page1.portalAccountName
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ');
 
-const maxWidth = currentPage.getWidth() - 100; // Comfortable margins
-const minFontSize = 10; // Minimum acceptable font size
-const suffix = " Onboarding_Form";
-// let fontSize = 24;
-let finalText = formattedName + suffix;
-let textWidth;
-let centerX;
-let headingY = currentPage.getHeight() - 50; // Position from top
+            const maxWidth = currentPage.getWidth() - 100; // Comfortable margins
+            const minFontSize = 10; // Minimum acceptable font size
+            const suffix = " Onboarding_Form";
+            // let fontSize = 24;
+            let finalText = formattedName + suffix;
+            let textWidth;
+            let centerX;
+            let headingY = currentPage.getHeight() - 50; // Position from top
 
-// Strategy 1: Try full text with auto-sized font
-do {
-    textWidth = boldFont.widthOfTextAtSize(finalText, fontSize);
-    if (textWidth > maxWidth && fontSize > minFontSize) {
-        fontSize -= 1;
-    }
-} while (textWidth > maxWidth && fontSize > minFontSize);
+            // Strategy 1: Try full text with auto-sized font
+            do {
+                textWidth = boldFont.widthOfTextAtSize(finalText, fontSize);
+                if (textWidth > maxWidth && fontSize > minFontSize) {
+                    fontSize -= 1;
+                }
+            } while (textWidth > maxWidth && fontSize > minFontSize);
 
-// Strategy 2: If still too wide at min size, use ellipsis
-if (textWidth > maxWidth) {
-    const ellipsis = "...";
-    const suffixWidth = boldFont.widthOfTextAtSize(suffix + ellipsis, minFontSize);
-    const availableWidth = maxWidth - suffixWidth;
-    
-    // Find how much of the name we can show
-    let visibleName = "";
-    for (let i = formattedName.length; i > 0; i--) {
-        const testName = formattedName.substring(0, i) + ellipsis;
-        if (boldFont.widthOfTextAtSize(testName, minFontSize) <= availableWidth) {
-            visibleName = testName;
-            break;
-        }
-    }
-    
-    finalText = visibleName + suffix;
-    textWidth = boldFont.widthOfTextAtSize(finalText, minFontSize);
-    fontSize = minFontSize;
-}
+            // Strategy 2: If still too wide at min size, use ellipsis
+            if (textWidth > maxWidth) {
+                const ellipsis = "...";
+                const suffixWidth = boldFont.widthOfTextAtSize(suffix + ellipsis, minFontSize);
+                const availableWidth = maxWidth - suffixWidth;
 
-// Strategy 3: As last resort, split to two lines
-if (textWidth > maxWidth) {
-    // Draw name on first line (truncated if needed)
-    let displayName = formattedName;
-    let nameWidth = boldFont.widthOfTextAtSize(displayName, fontSize);
-    
-    while (nameWidth > maxWidth && displayName.length > 10) {
-        displayName = displayName.substring(0, displayName.length - 1);
-        nameWidth = boldFont.widthOfTextAtSize(displayName + "...", fontSize);
-    }
-    
-    if (displayName.length < formattedName.length) {
-        displayName += "...";
-    }
-    
-    currentPage.drawText(displayName, {
-        x: 50,
-        y: headingY,
-        size: fontSize,
-        font: boldFont,
-        color: PDFLib.rgb(0, 0, 0),
-    });
-    
-    // Draw suffix on second line
-    currentPage.drawText("Onboarding_Form", {
-        x: 50,
-        y: headingY - 30,
-        size: fontSize,
-        font: boldFont,
-        color: PDFLib.rgb(0, 0, 0),
-    });
-    
-    yPos = headingY - 60;
-} else {
-    // Original centered version fits
-    centerX = (currentPage.getWidth() - textWidth) / 2 + 30;
-    currentPage.drawText(finalText, {
-        x: centerX,
-        y: headingY,
-        size: fontSize,
-        font: boldFont,
-        color: PDFLib.rgb(0, 0, 0),
-    });
-    yPos = headingY - lineHeight * 2;
-}
-const properCaseText = `${formattedName} Onboarding_Form`;
+                // Find how much of the name we can show
+                let visibleName = "";
+                for (let i = formattedName.length; i > 0; i--) {
+                    const testName = formattedName.substring(0, i) + ellipsis;
+                    if (boldFont.widthOfTextAtSize(testName, minFontSize) <= availableWidth) {
+                        visibleName = testName;
+                        break;
+                    }
+                }
+
+                finalText = visibleName + suffix;
+                textWidth = boldFont.widthOfTextAtSize(finalText, minFontSize);
+                fontSize = minFontSize;
+            }
+
+            // Strategy 3: As last resort, split to two lines
+            if (textWidth > maxWidth) {
+                // Draw name on first line (truncated if needed)
+                let displayName = formattedName;
+                let nameWidth = boldFont.widthOfTextAtSize(displayName, fontSize);
+
+                while (nameWidth > maxWidth && displayName.length > 10) {
+                    displayName = displayName.substring(0, displayName.length - 1);
+                    nameWidth = boldFont.widthOfTextAtSize(displayName + "...", fontSize);
+                }
+
+                if (displayName.length < formattedName.length) {
+                    displayName += "...";
+                }
+
+                currentPage.drawText(displayName, {
+                    x: 50,
+                    y: headingY,
+                    size: fontSize,
+                    font: boldFont,
+                    color: PDFLib.rgb(0, 0, 0),
+                });
+
+                // Draw suffix on second line
+                currentPage.drawText("Onboarding_Form", {
+                    x: 50,
+                    y: headingY - 30,
+                    size: fontSize,
+                    font: boldFont,
+                    color: PDFLib.rgb(0, 0, 0),
+                });
+
+                yPos = headingY - 60;
+            } else {
+                // Original centered version fits
+                centerX = (currentPage.getWidth() - textWidth) / 2 + 30;
+                currentPage.drawText(finalText, {
+                    x: centerX,
+                    y: headingY,
+                    size: fontSize,
+                    font: boldFont,
+                    color: PDFLib.rgb(0, 0, 0),
+                });
+                yPos = headingY - lineHeight * 2;
+            }
+            const properCaseText = `${formattedName} Onboarding_Form`;
 
             const currentDate = new Date();
             const formattedDate = currentDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -378,7 +378,7 @@ const properCaseText = `${formattedName} Onboarding_Form`;
                     });
 
                     const labelWidth = boldFont.widthOfTextAtSize(label, fontSize);
-                    const valueWidth = regularFont.widthOfTextAtSize(value || "NA", fontSize); // Handle null/undefined
+                    const valueWidth = regularFont.widthOfTextAtSize(value || "N/A", fontSize); // Handle null/undefined
                     const boxX = 50 + labelWidth + 5;
                     const boxY = yPos - fontSize;
 
@@ -406,66 +406,66 @@ const properCaseText = `${formattedName} Onboarding_Form`;
             drawSection("User Account Information", {
                 "Hosting Location: ": formData.page1.hostingLocation,
                 "Honeycomb Role: ": formData.page1.honeycombRole,
-                "Portal Account Name: " :formData.page1.portalAccountName,
+                "Portal Account Name: ": formData.page1.portalAccountName,
                 "User Name: ": formData.page1.userName,
                 "Designation: ": formData.page1.designation,
                 "Email: ": formData.page1.email,
                 "Phone: ": formData.page1.phoneNumber,
                 "SSO: ": formData.page1.ssoNeeded,
-    ...(formData.page1.ssoNeeded === "Yes" ? {
-        "Customer IT Contact Name: ": formData.page1.itContactName,
-        "Customer IT Contact Email: ": formData.page1.itContactEmail
-    } : {})
+                ...(formData.page1.ssoNeeded === "Yes" ? {
+                    "Customer IT Contact Name: ": formData.page1.itContactName,
+                    "Customer IT Contact Email: ": formData.page1.itContactEmail
+                } : {})
             });
 
             drawSection("UseCase Information", {
-                "Use Case: ": formData.page2.useCase || "NA",
-                "Coverage: ": formData.page2.coverage|| "NA",
-                "Shipment Using: ": formData.page2.shipmentUsing|| "NA",
-                "Reverse Pickup: ": formData.page2.reversePickup|| "NA",
-                "Number of Lanes: ": formData.page2.numberOfLanes|| "NA",
-                "Supported Battery Life: ": formData.page2.supportedBatteryLife|| "NA",
+                "Use Case: ": formData.page2.useCase || "N/A",
+                "Coverage: ": formData.page2.coverage || "N/A",
+                "Shipment Using: ": formData.page2.shipmentUsing || "N/A",
+                "Reverse Pickup: ": formData.page2.reversePickup || "N/A",
+                "Number of Lanes: ": formData.page2.numberOfLanes || "N/A",
+                "Supported Battery Life: ": formData.page2.supportedBatteryLife || "N/A",
             });
-            
-           // Modify the Device Configuration section like this:
-const deviceConfig = {
-    "Device Type: ": formData.page3.deviceType || "NA"
-};
 
-if (formData.page3.deviceType === "Router") {
-    // Router specific fields
-    deviceConfig["Locations: "] = formData.page3.locations?.length > 0 ? formData.page3.locations.join(", ") : "N/A";
-    deviceConfig["PRF: "] = formData.page3.reportFrequency|| "NA";
-    
-    if (formData.page3.locations?.includes("GPS")) {
-        deviceConfig["Latitude: "] = formData.page3.latitude || "NA";
-        deviceConfig["Longitude: "] = formData.page3.longitude || "NA";
-    }
-} else if (formData.page3.deviceType === "Solar") {
-    // Solar specific fields
-    deviceConfig["Interrupt: "] = formData.page3.interrupt?.length > 0 ? formData.page3.interrupt.join(", ") : "N/A";
-    deviceConfig["BLE: "] = formData.page3.ble || "NA";
-    deviceConfig["Motion Interval: "] = formData.page3.motionInterval || "NA";
-    deviceConfig["Standstill Interval: "] = formData.page3.stanstillInterval|| "NA";
-} else {
-    // Default device fields
-    deviceConfig["Select options to get location information: "] = formData.page3.locations?.length > 0 ? formData.page3.locations.join(", ") : "N/A";
-    deviceConfig["Select the sensors you want ON for your use case: "] = formData.page3.sensors?.length > 0 ? formData.page3.sensors.join(", ") : "N/A";
-    deviceConfig["Do you want to measure?: "] = formData.page3.interrupt?.length > 0 ? formData.page3.interrupt.join(", ") : "N/A";
-    deviceConfig["Do you want to use BLE Receiver: "] = formData.page3.ble || "NA";
-    deviceConfig["Enter how often device should report to cloud:"] = formData.page3.reportFrequency || "NA";
-    deviceConfig["Enter how often device should capture sensor data: "] = formData.page3.captureFrequency || "NA";
+            // Modify the Device Configuration section like this:
+            const deviceConfig = {
+                "Device Type: ": formData.page3.deviceType || "N/A"
+            };
 
-    // deviceConfig["Sample Mode: "] = formData.page3.sampleMode || "NA";
-    
-    // if (formData.page3.sampleMode === "ON") {
-    //     deviceConfig["Report Interval: "] = formData.page3.reportInterval || "NA";
-    //     deviceConfig["Sample Interval: "] = formData.page3.sampleInterval || "NA";
-    // } else {
-    //     deviceConfig["PRF: "] = formData.page3.prf || "NA";
-    // }
-}
-drawSection("Device Configuration", deviceConfig);
+            if (formData.page3.deviceType === "Router") {
+                // Router specific fields
+                deviceConfig["Locations: "] = formData.page3.locations?.length > 0 ? formData.page3.locations.join(", ") : "N/A";
+                deviceConfig["PRF: "] = formData.page3.reportFrequency || "N/A";
+
+                if (formData.page3.locations?.includes("GPS")) {
+                    deviceConfig["Latitude: "] = formData.page3.latitude || "N/A";
+                    deviceConfig["Longitude: "] = formData.page3.longitude || "N/A";
+                }
+            } else if (formData.page3.deviceType === "Solar") {
+                // Solar specific fields
+                deviceConfig["Interrupt: "] = formData.page3.interrupt?.length > 0 ? formData.page3.interrupt.join(", ") : "N/A";
+                deviceConfig["BLE: "] = formData.page3.ble || "N/A";
+                deviceConfig["Motion Interval: "] = formData.page3.motionInterval || "N/A";
+                deviceConfig["Standstill Interval: "] = formData.page3.stanstillInterval || "N/A";
+            } else {
+                // Default device fields
+                deviceConfig["Select options to get location information: "] = formData.page3.locations?.length > 0 ? formData.page3.locations.join(", ") : "N/A";
+                deviceConfig["Select the sensors you want ON for your use case: "] = formData.page3.sensors?.length > 0 ? formData.page3.sensors.join(", ") : "N/A";
+                deviceConfig["Do you want to measure?: "] = formData.page3.interrupt?.length > 0 ? formData.page3.interrupt.join(", ") : "N/A";
+                deviceConfig["Do you want to use BLE Receiver: "] = formData.page3.ble || "N/A";
+                deviceConfig["Enter how often device should report to cloud:"] = formData.page3.reportFrequency || "N/A";
+                deviceConfig["Enter how often device should capture sensor data: "] = formData.page3.captureFrequency || "N/A";
+
+                // deviceConfig["Sample Mode: "] = formData.page3.sampleMode || "N/A";
+
+                // if (formData.page3.sampleMode === "ON") {
+                //     deviceConfig["Report Interval: "] = formData.page3.reportInterval || "N/A";
+                //     deviceConfig["Sample Interval: "] = formData.page3.sampleInterval || "N/A";
+                // } else {
+                //     deviceConfig["PRF: "] = formData.page3.prf || "N/A";
+                // }
+            }
+            drawSection("Device Configuration", deviceConfig);
 
             const maxCommandLength = Math.max(...commandsList.map(command => command.length));
             const boxWidth = maxCommandLength * fontSize * 0.6 + boxPadding * 2;
@@ -530,9 +530,9 @@ drawSection("Device Configuration", deviceConfig);
             yPos -= boxPadding;
             yPos -= lineHeight * 3;
             drawSection("Product Category", {
-                "Sensor based Shipment Monitoring: ": formData.page4.shipmentType || NA,
-                "Inventories: ": formData.page4.inventoryType || NA,
-                
+                "Sensor based Shipment Monitoring: ": formData.page4.shipmentType,
+                "Inventories: ": formData.page4.inventoryType,
+
             });
             yPos -= lineHeight * 2;
             drawSection("Document Sign Off", {
@@ -543,7 +543,7 @@ drawSection("Device Configuration", deviceConfig);
                 "Approved By: ": formData.page5.approvedByName,
                 "Approval Date: ": formData.page5.approvalDate
             });
-           
+
             currentPage.drawText("Created by Sign:", {
                 x: 50, // Left side
                 y: yPos - 10, // Position above the signature image
@@ -551,7 +551,7 @@ drawSection("Device Configuration", deviceConfig);
                 color: textColor,
                 font: boldFont,
             });
-            
+
             currentPage.drawText("Approved by Sign:", {
                 x: 350, // Right side
                 y: yPos - 10, // Position above the signature image
@@ -581,8 +581,8 @@ drawSection("Device Configuration", deviceConfig);
 
 
 
-// const modifiedPdfBytes = await pdfDoc.save();
-const modifiedPdfBytes = await pdfDoc.save();
+            // const modifiedPdfBytes = await pdfDoc.save();
+            const modifiedPdfBytes = await pdfDoc.save();
             const blob = new Blob([modifiedPdfBytes], { type: "application/pdf" });
             saveAs(blob, "rename_modified.pdf");
 
@@ -597,8 +597,8 @@ const modifiedPdfBytes = await pdfDoc.save();
             console.error("Error modifying PDF:", error);
             alert("Error modifying PDF: " + error.message);
         }
-     
-}catch (error) {
+
+    } catch (error) {
         console.error("Error in submitForm:", error);
     }
 }
