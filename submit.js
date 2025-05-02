@@ -445,7 +445,7 @@ async function submitForm() {
                 // Solar specific fields
                 deviceConfig["Interrupt: "] = formData.page3.interrupt?.length > 0 ? formData.page3.interrupt.join(", ") : "N/A";
                 deviceConfig["BLE: "] = formData.page3.ble || "N/A";
-                deviceConfig["Motion Interval: "] = formData.page3.motionInterval || "N/A";
+                deviceConfig["Motion Interval: "] = formData.page3.reportFrequency || "N/A";
                 deviceConfig["Standstill Interval: "] = formData.page3.stanstillInterval || "N/A";
             } else {
                 // Default device fields
